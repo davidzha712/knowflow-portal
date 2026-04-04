@@ -37,49 +37,43 @@ export function ContactForm() {
     []
   )
 
-  const handleSubmit = useCallback(
-    async (e: FormEvent) => {
-      e.preventDefault()
-      setIsSubmitting(true)
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      setIsSubmitting(false)
-      setSubmitted(true)
-      setForm(initialState)
-    },
-    []
-  )
+  const handleSubmit = useCallback(async (e: FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    setIsSubmitting(false)
+    setSubmitted(true)
+    setForm(initialState)
+  }, [])
 
   return (
-    <section id="contact" className="relative py-24 sm:py-32">
+    <section id="contact" className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl">
-          {/* Section header */}
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+          {/* Left: text */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-center"
+            className="flex flex-col justify-center"
           >
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               {t("title")}
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
               {t("subtitle")}
             </p>
           </motion.div>
 
-          {/* Form */}
+          {/* Right: form */}
           <motion.form
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
             onSubmit={handleSubmit}
-            className="mt-12 space-y-6 rounded-2xl border border-border/50 bg-card/50 p-6 backdrop-blur-sm sm:p-8"
+            className="space-y-6 rounded-xl border border-border bg-card p-6 sm:p-8"
           >
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="space-y-2">
@@ -89,7 +83,6 @@ export function ContactForm() {
                   required
                   value={form.name}
                   onChange={updateField("name")}
-                  className="bg-background/50"
                 />
               </div>
               <div className="space-y-2">
@@ -100,7 +93,6 @@ export function ContactForm() {
                   required
                   value={form.email}
                   onChange={updateField("email")}
-                  className="bg-background/50"
                 />
               </div>
             </div>
@@ -111,7 +103,6 @@ export function ContactForm() {
                 id="contact-company"
                 value={form.company}
                 onChange={updateField("company")}
-                className="bg-background/50"
               />
             </div>
 
@@ -122,7 +113,6 @@ export function ContactForm() {
                 rows={4}
                 value={form.message}
                 onChange={updateField("message")}
-                className="bg-background/50"
               />
             </div>
 
@@ -130,7 +120,7 @@ export function ContactForm() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400"
+                className="flex items-center gap-2 rounded-lg bg-primary/10 px-4 py-3 text-sm text-primary"
               >
                 <CheckCircle className="size-4" />
                 {t("success")}
@@ -140,7 +130,7 @@ export function ContactForm() {
                 type="submit"
                 size="lg"
                 disabled={isSubmitting}
-                className="w-full gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25 hover:from-blue-600 hover:to-indigo-700"
+                className="w-full gap-2"
               >
                 <Send className="size-4" />
                 {isSubmitting ? "..." : t("submit")}

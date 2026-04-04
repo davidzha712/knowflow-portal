@@ -7,13 +7,8 @@ import { Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-const localeLabels: Record<string, string> = {
-  en: "EN",
-  zh: "ZH",
-  de: "DE",
-}
-
 const locales = ["en", "zh", "de"] as const
+const localeLabels: Record<string, string> = { en: "EN", zh: "ZH", de: "DE" }
 
 export function LanguageSwitcher() {
   const locale = useLocale()
@@ -25,7 +20,9 @@ export function LanguageSwitcher() {
     (nextLocale: string) => {
       startTransition(() => {
         const segments = pathname.split("/")
-        const hasLocale = locales.includes(segments[1] as typeof locales[number])
+        const hasLocale = locales.includes(
+          segments[1] as (typeof locales)[number]
+        )
         const pathWithoutLocale = hasLocale
           ? "/" + segments.slice(2).join("/")
           : pathname
@@ -40,7 +37,7 @@ export function LanguageSwitcher() {
   )
 
   return (
-    <div className="flex items-center gap-0.5 rounded-lg border border-border/50 p-0.5">
+    <div className="flex items-center gap-0.5 rounded-lg border border-border p-0.5">
       <Globe className="ml-1.5 size-3.5 text-muted-foreground" />
       {locales.map((loc) => (
         <Button
