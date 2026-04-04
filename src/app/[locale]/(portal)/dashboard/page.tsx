@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server"
+import { eq, and, isNull, gte } from "drizzle-orm"
 import { Key, Shield, AlertTriangle, Plus, Zap } from "lucide-react"
 import Link from "next/link"
 import {
@@ -10,43 +11,8 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-
-// TODO: Replace with real data from database once Drizzle ORM is connected
-const PLACEHOLDER_STATS = {
-  totalLicenses: 3,
-  activeActivations: 7,
-  expiringSoon: 1,
-} as const
-
-const PLACEHOLDER_LICENSES = [
-  {
-    id: "lic_1",
-    key: "KF-XXXX-XXXX-A1B2",
-    tier: "Enterprise",
-    status: "active" as const,
-    activations: 5,
-    maxActivations: 10,
-    expiresAt: "2027-01-15",
-  },
-  {
-    id: "lic_2",
-    key: "KF-XXXX-XXXX-C3D4",
-    tier: "Professional",
-    status: "active" as const,
-    activations: 2,
-    maxActivations: 3,
-    expiresAt: "2026-06-30",
-  },
-  {
-    id: "lic_3",
-    key: "KF-XXXX-XXXX-E5F6",
-    tier: "Starter",
-    status: "expiring" as const,
-    activations: 0,
-    maxActivations: 1,
-    expiresAt: "2026-04-30",
-  },
-] as const
+import { db } from "@/lib/db"
+import { customers, licenses, activations } from "@/lib/db/schema"
 
 function StatCard({
   title,
@@ -75,22 +41,59 @@ function StatCard({
   )
 }
 
-function statusBadgeVariant(status: string) {
-  switch (status) {
-    case "active":
-      return "secondary" as const
-    case "expiring":
-      return "destructive" as const
-    case "expired":
-      return "outline" as const
-    default:
-      return "outline" as const
-  }
+function statusBadgeVariant(status: string, expiresAt: Date | null) {
+  if (expiresAt && expiresAt < new Date()) return "outline" as const
+  const thirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  if (expiresAt && expiresAt < thirtyDays) return "destructive" as const
+  if (status === "active") return "secondary" as const
+  if (status === "revoked") return "outline" as const
+  return "outline" as const
+}
+
+function getDisplayStatus(status: string, expiresAt: Date | null): string {
+  if (expiresAt && expiresAt < new Date()) return "expired"
+  const thirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  if (expiresAt && expiresAt < thirtyDays) return "expiring"
+  return status ?? "active"
+}
+
+function maskLicenseKey(key: string): string {
+  if (key.length <= 8) return key
+  return key.slice(0, 3) + "-XXXX-XXXX-" + key.slice(-4)
 }
 
 export default async function DashboardPage() {
   const user = await currentUser()
   const displayName = user?.firstName ?? user?.username ?? "there"
+
+  // Fetch customer and licenses from DB
+  const customer = user?.id
+    ? await db.query.customers.findFirst({
+        where: eq(customers.clerkId, user.id),
+        with: {
+          licenses: {
+            with: { activations: true },
+          },
+        },
+      })
+    : null
+
+  const userLicenses = customer?.licenses ?? []
+
+  // Calculate real stats
+  const totalLicenses = userLicenses.length
+  const activeActivationCount = userLicenses.reduce((sum, lic) => {
+    const active = (lic.activations ?? []).filter((a) => !a.revokedAt)
+    return sum + active.length
+  }, 0)
+  const thirtyDaysFromNow = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  const expiringSoon = userLicenses.filter(
+    (lic) =>
+      lic.status === "active" &&
+      lic.expiresAt &&
+      lic.expiresAt < thirtyDaysFromNow &&
+      lic.expiresAt > new Date(),
+  ).length
 
   return (
     <div className="space-y-8">
@@ -108,19 +111,19 @@ export default async function DashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           title="Total Licenses"
-          value={PLACEHOLDER_STATS.totalLicenses}
+          value={totalLicenses}
           icon={Key}
           description="Across all tiers"
         />
         <StatCard
           title="Active Activations"
-          value={PLACEHOLDER_STATS.activeActivations}
+          value={activeActivationCount}
           icon={Shield}
           description="Machines currently activated"
         />
         <StatCard
           title="Expiring Soon"
-          value={PLACEHOLDER_STATS.expiringSoon}
+          value={expiringSoon}
           icon={AlertTriangle}
           description="Within the next 30 days"
         />
@@ -141,35 +144,67 @@ export default async function DashboardPage() {
       {/* Recent licenses */}
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Recent Licenses</h2>
-        <div className="grid gap-3">
-          {PLACEHOLDER_LICENSES.map((license) => (
-            <Card key={license.id} size="sm">
-              <CardContent className="flex items-center gap-4">
-                <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
-                  <Key className="size-4 text-muted-foreground" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium font-mono truncate">
-                      {license.key}
-                    </p>
-                    <Badge variant={statusBadgeVariant(license.status)}>
-                      {license.status}
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {license.tier} &middot; {license.activations}/
-                    {license.maxActivations} activations &middot; Expires{" "}
-                    {license.expiresAt}
-                  </p>
-                </div>
-                <Button variant="ghost" size="sm" render={<Link href="/licenses" />}>
-                  View
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {userLicenses.length === 0 ? (
+          <Card>
+            <CardContent className="py-8 text-center">
+              <p className="text-sm text-muted-foreground">
+                No licenses yet. Purchase your first license to get started.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-3">
+            {userLicenses.slice(0, 5).map((license) => {
+              const activeCount = (license.activations ?? []).filter(
+                (a) => !a.revokedAt,
+              ).length
+              const displayStatus = getDisplayStatus(
+                license.status ?? "active",
+                license.expiresAt,
+              )
+              return (
+                <Card key={license.id} size="sm">
+                  <CardContent className="flex items-center gap-4">
+                    <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
+                      <Key className="size-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium font-mono truncate">
+                          {maskLicenseKey(license.licenseKey)}
+                        </p>
+                        <Badge
+                          variant={statusBadgeVariant(
+                            license.status ?? "active",
+                            license.expiresAt,
+                          )}
+                        >
+                          {displayStatus}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {license.tier.charAt(0).toUpperCase() +
+                          license.tier.slice(1)}{" "}
+                        &middot; {activeCount}/{license.maxActivations ?? 1}{" "}
+                        activations &middot; Expires{" "}
+                        {license.expiresAt
+                          ? license.expiresAt.toLocaleDateString()
+                          : "N/A"}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      render={<Link href="/licenses" />}
+                    >
+                      View
+                    </Button>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        )}
       </div>
     </div>
   )

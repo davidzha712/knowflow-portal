@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import {
   Card,
   CardContent,
@@ -19,31 +19,24 @@ import {
   Trash2,
   Monitor,
   ChevronRight,
+  Loader2,
 } from "lucide-react"
 
-// TODO: Replace with real license data from API
-const PLACEHOLDER_LICENSES = [
-  { id: "lic_1", maskedKey: "KF-XXXX-XXXX-XXXX-G7H8", tier: "Enterprise" },
-  { id: "lic_2", maskedKey: "KF-XXXX-XXXX-XXXX-O5P6", tier: "Professional" },
-] as const
+interface LicenseOption {
+  id: string
+  licenseKey: string
+  tier: string
+  status: string | null
+  maxActivations: number | null
+}
 
-// TODO: Replace with real activation data from API
-const PLACEHOLDER_ACTIVATIONS = [
-  {
-    id: "act_1",
-    licenseKey: "KF-XXXX-XXXX-XXXX-G7H8",
-    machineFingerprint: "a3b4c5d6e7f8",
-    machineName: "Production Server 1",
-    activatedAt: "2026-03-15",
-  },
-  {
-    id: "act_2",
-    licenseKey: "KF-XXXX-XXXX-XXXX-G7H8",
-    machineFingerprint: "f8e7d6c5b4a3",
-    machineName: "Dev Workstation",
-    activatedAt: "2026-03-20",
-  },
-] as const
+interface ActivationEntry {
+  id: string
+  licenseKey: string
+  licenseTier: string
+  machineFingerprint: string
+  activatedAt: string | null
+}
 
 type Step = 1 | 2 | 3
 
@@ -53,16 +46,91 @@ export default function ActivatePage() {
   const [requestCode, setRequestCode] = useState("")
   const [activationCode, setActivationCode] = useState("")
   const [copied, setCopied] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
-  const handleGenerateActivation = useCallback(() => {
-    // TODO: Call API to generate activation code from request code
-    setActivationCode(
-      "ACTV-" +
-        Array.from({ length: 32 }, () =>
-          Math.random().toString(36).charAt(2)
-        ).join("")
-    )
-    setCurrentStep(3)
+  // Real data from API
+  const [licenses, setLicenses] = useState<LicenseOption[]>([])
+  const [activationsData, setActivationsData] = useState<ActivationEntry[]>([])
+  const [loadingData, setLoadingData] = useState(true)
+
+  // Fetch licenses and activations on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoadingData(true)
+      try {
+        const [licRes, actRes] = await Promise.all([
+          fetch("/api/licenses"),
+          fetch("/api/activations"),
+        ])
+        if (licRes.ok) {
+          const licJson = await licRes.json()
+          setLicenses(
+            (licJson.data ?? []).filter(
+              (l: LicenseOption) => l.status === "active",
+            ),
+          )
+        }
+        if (actRes.ok) {
+          const actJson = await actRes.json()
+          setActivationsData(actJson.data ?? [])
+        }
+      } catch {
+        // non-critical
+      } finally {
+        setLoadingData(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  const handleGenerateActivation = useCallback(async () => {
+    if (!selectedLicense || !requestCode.trim()) return
+    setLoading(true)
+    setError("")
+    try {
+      const res = await fetch("/api/activate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          licenseId: selectedLicense,
+          requestCode: requestCode.trim(),
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok) {
+        setError(json.error ?? "Activation failed")
+        return
+      }
+      setActivationCode(json.data.activationCode)
+      setCurrentStep(3)
+
+      // Refresh activations
+      const actRes = await fetch("/api/activations")
+      if (actRes.ok) {
+        const actJson = await actRes.json()
+        setActivationsData(actJson.data ?? [])
+      }
+    } catch {
+      setError("Network error. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }, [selectedLicense, requestCode])
+
+  const handleRevoke = useCallback(async (activationId: string) => {
+    try {
+      const res = await fetch("/api/activate", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ activationId }),
+      })
+      if (res.ok) {
+        setActivationsData((prev) => prev.filter((a) => a.id !== activationId))
+      }
+    } catch {
+      // non-critical
+    }
   }, [])
 
   const handleCopyActivation = useCallback(async () => {
@@ -80,7 +148,13 @@ export default function ActivatePage() {
     setSelectedLicense("")
     setRequestCode("")
     setActivationCode("")
+    setError("")
   }, [])
+
+  const maskKey = (key: string): string => {
+    if (key.length <= 8) return key
+    return key.slice(0, 3) + "-XXXX-" + key.slice(-4)
+  }
 
   const stepClasses = (step: Step) =>
     step === currentStep
@@ -140,34 +214,46 @@ export default function ActivatePage() {
           </CardHeader>
           {currentStep >= 1 && (
             <CardContent className="grid gap-2">
-              {PLACEHOLDER_LICENSES.map((license) => (
-                <button
-                  key={license.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedLicense(license.id)
-                    setCurrentStep(2)
-                  }}
-                  className={`flex items-center gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-muted ${
-                    selectedLicense === license.id
-                      ? "border-primary bg-primary/5"
-                      : "border-border"
-                  }`}
-                >
-                  <Shield className="size-4 shrink-0 text-muted-foreground" />
-                  <div className="flex-1">
-                    <p className="text-sm font-mono font-medium">
-                      {license.maskedKey}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {license.tier}
-                    </p>
-                  </div>
-                  {selectedLicense === license.id && (
-                    <Check className="size-4 text-primary" />
-                  )}
-                </button>
-              ))}
+              {loadingData ? (
+                <div className="space-y-2">
+                  <div className="h-14 w-full animate-pulse rounded-lg bg-muted" />
+                  <div className="h-14 w-full animate-pulse rounded-lg bg-muted" />
+                </div>
+              ) : licenses.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-4 text-center">
+                  No active licenses found. Purchase a license first.
+                </p>
+              ) : (
+                licenses.map((license) => (
+                  <button
+                    key={license.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedLicense(license.id)
+                      setCurrentStep(2)
+                    }}
+                    className={`flex items-center gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-muted ${
+                      selectedLicense === license.id
+                        ? "border-primary bg-primary/5"
+                        : "border-border"
+                    }`}
+                  >
+                    <Shield className="size-4 shrink-0 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm font-mono font-medium">
+                        {maskKey(license.licenseKey)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {license.tier.charAt(0).toUpperCase() +
+                          license.tier.slice(1)}
+                      </p>
+                    </div>
+                    {selectedLicense === license.id && (
+                      <Check className="size-4 text-primary" />
+                    )}
+                  </button>
+                ))
+              )}
             </CardContent>
           )}
         </Card>
@@ -196,10 +282,14 @@ export default function ActivatePage() {
                   rows={4}
                 />
               </div>
+              {error && (
+                <p className="text-sm text-destructive">{error}</p>
+              )}
               <Button
                 onClick={handleGenerateActivation}
-                disabled={!requestCode.trim()}
+                disabled={!requestCode.trim() || loading}
               >
+                {loading && <Loader2 className="size-4 animate-spin mr-1.5" />}
                 Generate Activation Code
               </Button>
             </CardContent>
@@ -248,7 +338,12 @@ export default function ActivatePage() {
       {/* Current activations */}
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Current Activations</h2>
-        {(PLACEHOLDER_ACTIVATIONS as ReadonlyArray<typeof PLACEHOLDER_ACTIVATIONS[number]>).length === 0 ? (
+        {loadingData ? (
+          <div className="grid gap-3">
+            <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
+            <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
+          </div>
+        ) : activationsData.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center">
               <p className="text-sm text-muted-foreground">
@@ -258,28 +353,32 @@ export default function ActivatePage() {
           </Card>
         ) : (
           <div className="grid gap-3">
-            {PLACEHOLDER_ACTIVATIONS.map((activation) => (
+            {activationsData.map((activation) => (
               <Card key={activation.id} size="sm">
                 <CardContent className="flex items-center gap-4">
                   <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
                     <Monitor className="size-4 text-muted-foreground" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">
-                      {activation.machineName}
+                    <p className="text-sm font-medium font-mono">
+                      {activation.machineFingerprint.slice(0, 12)}...
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      <span className="font-mono">
-                        {activation.machineFingerprint}
-                      </span>{" "}
-                      &middot; {activation.licenseKey} &middot; Activated{" "}
-                      {activation.activatedAt}
+                      {maskKey(activation.licenseKey)} &middot;{" "}
+                      <Badge variant="secondary" className="text-[10px]">
+                        {activation.licenseTier}
+                      </Badge>{" "}
+                      &middot; Activated{" "}
+                      {activation.activatedAt
+                        ? new Date(activation.activatedAt).toLocaleDateString()
+                        : "—"}
                     </p>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    aria-label={`Revoke activation for ${activation.machineName}`}
+                    onClick={() => handleRevoke(activation.id)}
+                    aria-label="Revoke activation"
                   >
                     <Trash2 className="size-3.5 text-destructive" />
                   </Button>

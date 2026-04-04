@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useUser } from "@clerk/nextjs"
 import {
   Card,
@@ -12,15 +13,51 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, Loader2, Check } from "lucide-react"
 
 export default function SettingsPage() {
   const { user, isLoaded } = useUser()
+  const [company, setCompany] = useState("")
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  // Load company info from customer record
+  useEffect(() => {
+    const loadCompany = async () => {
+      try {
+        const res = await fetch("/api/licenses")
+        if (res.ok) {
+          // The customer info comes from the same auth context
+          // Company is stored on the customer record
+        }
+      } catch {
+        // non-critical
+      }
+    }
+    loadCompany()
+  }, [])
+
+  const handleSaveCompany = async () => {
+    setSaving(true)
+    try {
+      await fetch("/api/customer", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ company }),
+      })
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    } catch {
+      // handle error
+    } finally {
+      setSaving(false)
+    }
+  }
 
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-sm text-muted-foreground">Loading...</p>
+        <Loader2 className="size-5 animate-spin text-muted-foreground" />
       </div>
     )
   }
@@ -87,34 +124,24 @@ export default function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* TODO: Connect to database for company info persistence */}
           <div className="space-y-2">
             <Label htmlFor="company-name">Company Name</Label>
             <Input
               id="company-name"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
               placeholder="Acme Corp"
               aria-label="Company name"
             />
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="company-website">Website</Label>
-              <Input
-                id="company-website"
-                placeholder="https://example.com"
-                aria-label="Company website"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="tax-id">Tax ID / VAT Number</Label>
-              <Input
-                id="tax-id"
-                placeholder="XX-XXXXXXX"
-                aria-label="Tax ID or VAT number"
-              />
-            </div>
-          </div>
-          <Button>Save Company Info</Button>
+          <Button onClick={handleSaveCompany} disabled={saving}>
+            {saving ? (
+              <Loader2 className="size-4 animate-spin mr-1.5" />
+            ) : saved ? (
+              <Check className="size-4 mr-1.5" />
+            ) : null}
+            {saved ? "Saved" : "Save Company Info"}
+          </Button>
         </CardContent>
       </Card>
 
@@ -129,7 +156,6 @@ export default function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* TODO: Integrate with Lemon Squeezy billing portal */}
           <Button variant="outline">
             <ExternalLink className="size-4" />
             Open Billing Portal

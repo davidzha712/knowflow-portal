@@ -1,4 +1,7 @@
-import { Key, Download, Zap, Eye, PackageOpen } from "lucide-react"
+import { currentUser } from "@clerk/nextjs/server"
+import { eq } from "drizzle-orm"
+import { Key, Download, Zap, PackageOpen } from "lucide-react"
+import Link from "next/link"
 import {
   Card,
   CardContent,
@@ -9,68 +12,40 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { db } from "@/lib/db"
+import { customers } from "@/lib/db/schema"
 
-// TODO: Replace with real data from database once Drizzle ORM is connected
-const PLACEHOLDER_LICENSES = [
-  {
-    id: "lic_1",
-    key: "KF-A1B2-C3D4-E5F6-G7H8",
-    maskedKey: "KF-XXXX-XXXX-XXXX-G7H8",
-    tier: "Enterprise",
-    status: "active" as const,
-    activations: 5,
-    maxActivations: 10,
-    issuedAt: "2026-01-15",
-    expiresAt: "2027-01-15",
-  },
-  {
-    id: "lic_2",
-    key: "KF-I9J0-K1L2-M3N4-O5P6",
-    maskedKey: "KF-XXXX-XXXX-XXXX-O5P6",
-    tier: "Professional",
-    status: "active" as const,
-    activations: 2,
-    maxActivations: 3,
-    issuedAt: "2026-02-01",
-    expiresAt: "2026-06-30",
-  },
-  {
-    id: "lic_3",
-    key: "KF-Q7R8-S9T0-U1V2-W3X4",
-    maskedKey: "KF-XXXX-XXXX-XXXX-W3X4",
-    tier: "Starter",
-    status: "expiring" as const,
-    activations: 0,
-    maxActivations: 1,
-    issuedAt: "2025-04-30",
-    expiresAt: "2026-04-30",
-  },
-] as const
+function statusBadgeVariant(status: string, expiresAt: Date | null) {
+  if (expiresAt && expiresAt < new Date()) return "outline" as const
+  const thirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  if (expiresAt && expiresAt < thirtyDays) return "destructive" as const
+  if (status === "active") return "secondary" as const
+  return "outline" as const
+}
 
-function statusBadgeVariant(status: string) {
-  switch (status) {
-    case "active":
-      return "secondary" as const
-    case "expiring":
-      return "destructive" as const
-    case "expired":
-      return "outline" as const
-    default:
-      return "outline" as const
-  }
+function getDisplayStatus(status: string, expiresAt: Date | null): string {
+  if (expiresAt && expiresAt < new Date()) return "expired"
+  const thirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  if (expiresAt && expiresAt < thirtyDays) return "expiring"
+  return status ?? "active"
 }
 
 function tierColor(tier: string): string {
   switch (tier) {
-    case "Enterprise":
+    case "enterprise":
       return "bg-violet-500/10 text-violet-400"
-    case "Professional":
+    case "pro":
       return "bg-blue-500/10 text-blue-400"
-    case "Starter":
+    case "free":
       return "bg-emerald-500/10 text-emerald-400"
     default:
       return "bg-muted text-muted-foreground"
   }
+}
+
+function maskKey(key: string): string {
+  if (key.length <= 8) return key
+  return key.slice(0, 3) + "-XXXX-XXXX-" + key.slice(-4)
 }
 
 function EmptyState() {
@@ -91,19 +66,21 @@ function EmptyState() {
   )
 }
 
-export default function LicensesPage() {
-  // TODO: Fetch licenses from database
-  const licenses: ReadonlyArray<{
-    id: string
-    key: string
-    maskedKey: string
-    tier: string
-    status: string
-    activations: number
-    maxActivations: number
-    issuedAt: string
-    expiresAt: string
-  }> = PLACEHOLDER_LICENSES
+export default async function LicensesPage() {
+  const user = await currentUser()
+
+  const customer = user?.id
+    ? await db.query.customers.findFirst({
+        where: eq(customers.clerkId, user.id),
+        with: {
+          licenses: {
+            with: { activations: true },
+          },
+        },
+      })
+    : null
+
+  const userLicenses = customer?.licenses ?? []
 
   return (
     <div className="space-y-8">
@@ -119,97 +96,136 @@ export default function LicensesPage() {
       </div>
 
       {/* License list */}
-      {licenses.length === 0 ? (
+      {userLicenses.length === 0 ? (
         <EmptyState />
       ) : (
         <div className="grid gap-4">
-          {licenses.map((license) => (
-            <Card key={license.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
-                      <Key className="size-4 text-muted-foreground" />
+          {userLicenses.map((license) => {
+            const activeCount = (license.activations ?? []).filter(
+              (a) => !a.revokedAt,
+            ).length
+            const displayStatus = getDisplayStatus(
+              license.status ?? "active",
+              license.expiresAt,
+            )
+            const tierLabel =
+              license.tier.charAt(0).toUpperCase() + license.tier.slice(1)
+
+            return (
+              <Card key={license.id}>
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
+                        <Key className="size-4 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <CardTitle className="font-mono text-base">
+                          {maskKey(license.licenseKey)}
+                        </CardTitle>
+                        <CardDescription>
+                          Issued{" "}
+                          {license.createdAt
+                            ? license.createdAt.toLocaleDateString()
+                            : "—"}
+                        </CardDescription>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${tierColor(license.tier)}`}
+                      >
+                        {tierLabel}
+                      </span>
+                      <Badge
+                        variant={statusBadgeVariant(
+                          license.status ?? "active",
+                          license.expiresAt,
+                        )}
+                      >
+                        {displayStatus}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                    <div>
+                      <p className="text-xs text-muted-foreground">
+                        Activations
+                      </p>
+                      <p className="text-sm font-medium">
+                        {activeCount} / {license.maxActivations ?? 1}
+                      </p>
                     </div>
                     <div>
-                      <CardTitle className="font-mono text-base">
-                        {license.maskedKey}
-                      </CardTitle>
-                      <CardDescription>
-                        Issued {license.issuedAt}
-                      </CardDescription>
+                      <p className="text-xs text-muted-foreground">Tier</p>
+                      <p className="text-sm font-medium">{tierLabel}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Issued</p>
+                      <p className="text-sm font-medium">
+                        {license.createdAt
+                          ? license.createdAt.toLocaleDateString()
+                          : "—"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Expires</p>
+                      <p className="text-sm font-medium">
+                        {license.expiresAt
+                          ? license.expiresAt.toLocaleDateString()
+                          : "—"}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${tierColor(license.tier)}`}
-                    >
-                      {license.tier}
-                    </span>
-                    <Badge variant={statusBadgeVariant(license.status)}>
-                      {license.status}
-                    </Badge>
-                  </div>
-                </div>
-              </CardHeader>
 
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Activations</p>
-                    <p className="text-sm font-medium">
-                      {license.activations} / {license.maxActivations}
-                    </p>
+                  {/* Activation progress bar */}
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>Activation usage</span>
+                      <span>
+                        {activeCount}/{license.maxActivations ?? 1}
+                      </span>
+                    </div>
+                    <div className="mt-1 h-1.5 w-full rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-primary transition-all"
+                        style={{
+                          width: `${(activeCount / (license.maxActivations ?? 1)) * 100}%`,
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Tier</p>
-                    <p className="text-sm font-medium">{license.tier}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Issued</p>
-                    <p className="text-sm font-medium">{license.issuedAt}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Expires</p>
-                    <p className="text-sm font-medium">{license.expiresAt}</p>
-                  </div>
-                </div>
+                </CardContent>
 
-                {/* Activation progress bar */}
-                <div className="mt-4">
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Activation usage</span>
-                    <span>
-                      {license.activations}/{license.maxActivations}
-                    </span>
-                  </div>
-                  <div className="mt-1 h-1.5 w-full rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full bg-primary transition-all"
-                      style={{
-                        width: `${(license.activations / license.maxActivations) * 100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-
-              <CardFooter className="gap-2">
-                <Button variant="outline" size="sm">
-                  <Eye className="size-3.5" />
-                  View Details
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Zap className="size-3.5" />
-                  Activate
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Download className="size-3.5" />
-                  Certificate
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
+                <CardFooter className="gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    render={<Link href="/activate" />}
+                  >
+                    <Zap className="size-3.5" />
+                    Activate
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    render={
+                      <a
+                        href={`/api/licenses/${license.id}/certificate`}
+                        download
+                      />
+                    }
+                  >
+                    <Download className="size-3.5" />
+                    Certificate
+                  </Button>
+                </CardFooter>
+              </Card>
+            )
+          })}
         </div>
       )}
     </div>
