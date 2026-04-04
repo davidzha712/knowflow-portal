@@ -1,0 +1,133 @@
+{
+  "nav": {
+    "features": "功能",
+    "pricing": "价格",
+    "docs": "文档",
+    "contact": "联系我们",
+    "portal": "控制台",
+    "getStarted": "开始使用",
+    "signIn": "登录"
+  },
+  "hero": {
+    "badge": "企业级 RAG 引擎",
+    "title": "面向企业的智能知识管理",
+    "subtitle": "KnowFlow AI 提供生产级检索增强生成能力，具备深度文档理解、多模型编排和企业级安全保障。",
+    "cta": "免费试用",
+    "ctaSecondary": "预约演示",
+    "trustedBy": "深受领先企业信赖"
+  },
+  "features": {
+    "title": "企业 RAG 所需的一切",
+    "subtitle": "全面的平台，将您的文档转化为智能可查询的知识库。",
+    "coreRag": {
+      "title": "核心 RAG 引擎",
+      "description": "深度文档解析，支持版面识别、表格提取和智能分块，实现卓越的检索精度。"
+    },
+    "enterprise": {
+      "title": "企业就绪",
+      "description": "基于角色的访问控制、审计日志、SSO 集成和符合合规要求的部署选项。"
+    },
+    "ai": {
+      "title": "多模型 AI",
+      "description": "编排 OpenAI、Anthropic、本地 LLM 和自定义模型，自动故障转移和负载均衡。"
+    },
+    "dataSources": {
+      "title": "通用数据源",
+      "description": "连接 PDF、Word、Excel、网页、数据库、API 等，开箱支持 50+ 格式。"
+    },
+    "deployment": {
+      "title": "灵活部署",
+      "description": "支持本地部署、私有云或混合部署。Docker、Kubernetes 和离线环境全面支持。"
+    },
+    "commercial": {
+      "title": "商业许可",
+      "description": "完整的商业许可证，包含优先支持、SLA 保证和专属客户成功团队。"
+    }
+  },
+  "architecture": {
+    "title": "为规模而生",
+    "subtitle": "现代架构设计，兼顾可靠性、性能和可扩展性。"
+  },
+  "pricing": {
+    "title": "简单透明的定价",
+    "subtitle": "选择适合您需求的方案。所有方案均包含核心 RAG 能力。",
+    "monthly": "月付",
+    "annually": "年付",
+    "free": {
+      "name": "社区版",
+      "price": "免费",
+      "description": "适用于个人开发者和小团队",
+      "features": [
+        "最多 1,000 篇文档",
+        "2 个知识库",
+        "社区支持",
+        "基础分析",
+        "单用户"
+      ],
+      "cta": "免费开始"
+    },
+    "pro": {
+      "name": "专业版",
+      "price": "¥1,999",
+      "period": "/月",
+      "description": "适用于成长中的团队和部门",
+      "features": [
+        "无限文档",
+        "无限知识库",
+        "优先邮件支持",
+        "高级分析和审计日志",
+        "最多 20 个用户",
+        "SSO 集成",
+        "自定义模型支持"
+      ],
+      "cta": "免费试用",
+      "popular": "最受欢迎"
+    },
+    "enterprise": {
+      "name": "企业版",
+      "price": "定制",
+      "description": "适用于有特殊需求的大型组织",
+      "features": [
+        "专业版所有功能",
+        "无限用户",
+        "本地部署",
+        "专属支持工程师",
+        "SLA 保证 (99.9%)",
+        "定制集成",
+        "离线部署",
+        "合规包"
+      ],
+      "cta": "联系销售"
+    }
+  },
+  "contact": {
+    "title": "预约演示",
+    "subtitle": "亲身体验 KnowFlow AI。我们的团队将为您提供个性化演示。",
+    "name": "姓名",
+    "email": "工作邮箱",
+    "company": "公司",
+    "message": "请描述您的使用场景",
+    "submit": "请求演示",
+    "success": "谢谢！我们将在 24 小时内与您联系。"
+  },
+  "footer": {
+    "description": "企业级 RAG 引擎，实现智能知识管理。",
+    "product": "产品",
+    "resources": "资源",
+    "company": "公司",
+    "legal": "法律",
+    "documentation": "文档",
+    "blog": "博客",
+    "changelog": "更新日志",
+    "about": "关于我们",
+    "careers": "加入我们",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "copyright": "保留所有权利。"
+  },
+  "theme": {
+    "light": "浅色",
+    "dark": "深色",
+    "system": "跟随系统"
+  }
+}

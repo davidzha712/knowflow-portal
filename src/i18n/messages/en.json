@@ -1,0 +1,133 @@
+{
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "docs": "Documentation",
+    "contact": "Contact",
+    "portal": "Portal",
+    "getStarted": "Get Started",
+    "signIn": "Sign In"
+  },
+  "hero": {
+    "badge": "Enterprise-Grade RAG Engine",
+    "title": "Intelligent Knowledge Management for Enterprise",
+    "subtitle": "KnowFlow AI delivers production-ready Retrieval-Augmented Generation with deep document understanding, multi-model orchestration, and enterprise security.",
+    "cta": "Start Free Trial",
+    "ctaSecondary": "Book a Demo",
+    "trustedBy": "Trusted by leading enterprises"
+  },
+  "features": {
+    "title": "Everything You Need for Enterprise RAG",
+    "subtitle": "A comprehensive platform that transforms your documents into intelligent, queryable knowledge bases.",
+    "coreRag": {
+      "title": "Core RAG Engine",
+      "description": "Deep document parsing with layout recognition, table extraction, and intelligent chunking for superior retrieval accuracy."
+    },
+    "enterprise": {
+      "title": "Enterprise Ready",
+      "description": "Role-based access control, audit logging, SSO integration, and compliance-ready deployment options."
+    },
+    "ai": {
+      "title": "Multi-Model AI",
+      "description": "Orchestrate across OpenAI, Anthropic, local LLMs, and custom models with automatic fallback and load balancing."
+    },
+    "dataSources": {
+      "title": "Universal Data Sources",
+      "description": "Connect PDF, Word, Excel, web pages, databases, APIs, and more. 50+ format support out of the box."
+    },
+    "deployment": {
+      "title": "Flexible Deployment",
+      "description": "Deploy on-premise, private cloud, or hybrid. Docker, Kubernetes, and air-gapped environment support."
+    },
+    "commercial": {
+      "title": "Commercial License",
+      "description": "Full commercial license with priority support, SLA guarantees, and dedicated customer success team."
+    }
+  },
+  "architecture": {
+    "title": "Built for Scale",
+    "subtitle": "A modern architecture designed for reliability, performance, and extensibility."
+  },
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Choose the plan that fits your needs. All plans include core RAG capabilities.",
+    "monthly": "Monthly",
+    "annually": "Annually",
+    "free": {
+      "name": "Community",
+      "price": "Free",
+      "description": "For individual developers and small teams",
+      "features": [
+        "Up to 1,000 documents",
+        "2 knowledge bases",
+        "Community support",
+        "Basic analytics",
+        "Single user"
+      ],
+      "cta": "Get Started Free"
+    },
+    "pro": {
+      "name": "Professional",
+      "price": "$299",
+      "period": "/month",
+      "description": "For growing teams and departments",
+      "features": [
+        "Unlimited documents",
+        "Unlimited knowledge bases",
+        "Priority email support",
+        "Advanced analytics & audit log",
+        "Up to 20 users",
+        "SSO integration",
+        "Custom model support"
+      ],
+      "cta": "Start Free Trial",
+      "popular": "Most Popular"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price": "Custom",
+      "description": "For large organizations with specific needs",
+      "features": [
+        "Everything in Professional",
+        "Unlimited users",
+        "On-premise deployment",
+        "Dedicated support engineer",
+        "SLA guarantee (99.9%)",
+        "Custom integrations",
+        "Air-gapped deployment",
+        "Compliance packages"
+      ],
+      "cta": "Contact Sales"
+    }
+  },
+  "contact": {
+    "title": "Book a Demo",
+    "subtitle": "See KnowFlow AI in action. Our team will walk you through a personalized demo.",
+    "name": "Full Name",
+    "email": "Work Email",
+    "company": "Company",
+    "message": "Tell us about your use case",
+    "submit": "Request Demo",
+    "success": "Thank you! We'll be in touch within 24 hours."
+  },
+  "footer": {
+    "description": "Enterprise-grade RAG engine for intelligent knowledge management.",
+    "product": "Product",
+    "resources": "Resources",
+    "company": "Company",
+    "legal": "Legal",
+    "documentation": "Documentation",
+    "blog": "Blog",
+    "changelog": "Changelog",
+    "about": "About",
+    "careers": "Careers",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "copyright": "All rights reserved."
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}
