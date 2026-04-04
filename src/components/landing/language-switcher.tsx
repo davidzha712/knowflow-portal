@@ -1,9 +1,9 @@
 "use client"
 
 import { useLocale } from "next-intl"
-import { useRouter, usePathname } from "next/navigation"
 import { useCallback, useTransition } from "react"
 import { Globe } from "lucide-react"
+import { useRouter, usePathname } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -19,18 +19,7 @@ export function LanguageSwitcher() {
   const handleSwitch = useCallback(
     (nextLocale: string) => {
       startTransition(() => {
-        const segments = pathname.split("/")
-        const hasLocale = locales.includes(
-          segments[1] as (typeof locales)[number]
-        )
-        const pathWithoutLocale = hasLocale
-          ? "/" + segments.slice(2).join("/")
-          : pathname
-        const newPath =
-          nextLocale === "en"
-            ? pathWithoutLocale || "/"
-            : `/${nextLocale}${pathWithoutLocale}`
-        router.push(newPath)
+        router.replace(pathname, { locale: nextLocale })
       })
     },
     [pathname, router]
@@ -43,11 +32,11 @@ export function LanguageSwitcher() {
         <Button
           key={loc}
           variant="ghost"
-          size="xs"
+          size="sm"
           disabled={isPending}
           onClick={() => handleSwitch(loc)}
           className={cn(
-            "min-w-[2rem] text-xs font-medium",
+            "h-6 min-w-[2rem] px-1.5 text-xs font-medium",
             locale === loc &&
               "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary"
           )}
