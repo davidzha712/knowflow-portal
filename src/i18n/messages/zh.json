@@ -14,7 +14,13 @@
     "subtitle": "KnowFlow AI 提供生产级检索增强生成能力，具备深度文档理解、多模型编排和企业级安全保障。",
     "cta": "免费试用",
     "ctaSecondary": "预约演示",
-    "trustedBy": "深受领先企业信赖"
+    "poweredBy": "基于 RAGFlow 构建 — 最受欢迎的开源 RAG 引擎",
+    "stats": {
+      "stars": "GitHub Stars",
+      "forks": "Forks",
+      "dockerPulls": "Docker Pulls",
+      "contributors": "Contributors"
+    }
   },
   "features": {
     "title": "企业 RAG 所需的一切",

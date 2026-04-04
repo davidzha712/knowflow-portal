@@ -14,7 +14,13 @@
     "subtitle": "KnowFlow AI bietet produktionsreife Retrieval-Augmented Generation mit tiefem Dokumentenverständnis, Multi-Model-Orchestrierung und Unternehmenssicherheit.",
     "cta": "Kostenlos testen",
     "ctaSecondary": "Demo buchen",
-    "trustedBy": "Vertraut von führenden Unternehmen"
+    "poweredBy": "Basierend auf RAGFlow — der beliebtesten Open-Source RAG Engine",
+    "stats": {
+      "stars": "GitHub Stars",
+      "forks": "Forks",
+      "dockerPulls": "Docker Pulls",
+      "contributors": "Contributors"
+    }
   },
   "features": {
     "title": "Alles für Enterprise RAG",
