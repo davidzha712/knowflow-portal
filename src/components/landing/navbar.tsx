@@ -12,6 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+import { Link } from "@/i18n/navigation"
 import { ThemeToggle } from "./theme-toggle"
 import { LanguageSwitcher } from "./language-switcher"
 
@@ -78,8 +79,11 @@ export function Navbar() {
         <div className="hidden items-center gap-2 md:flex">
           <LanguageSwitcher />
           <ThemeToggle />
-          <Button size="sm" onClick={() => scrollToSection("pricing")}>
-            {t("getStarted")}
+          <Button variant="ghost" size="sm" render={<Link href="/sign-in" />}>
+            {t("signIn")}
+          </Button>
+          <Button size="sm" render={<Link href="/dashboard" />}>
+            {t("portal")}
           </Button>
         </div>
 
@@ -114,10 +118,17 @@ export function Navbar() {
               <div className="mt-4 flex flex-col gap-3 px-4">
                 <LanguageSwitcher />
                 <Button
+                  variant="outline"
                   className="w-full"
-                  onClick={() => scrollToSection("pricing")}
+                  render={<Link href="/sign-in" />}
                 >
-                  {t("getStarted")}
+                  {t("signIn")}
+                </Button>
+                <Button
+                  className="w-full"
+                  render={<Link href="/dashboard" />}
+                >
+                  {t("portal")}
                 </Button>
               </div>
             </SheetContent>
