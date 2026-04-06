@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const locales = ["en", "zh", "de"] as const
-const localeLabels: Record<string, string> = { en: "EN", zh: "ZH", de: "DE" }
+const localeLabels: Record<string, string> = { en: "EN", zh: "中", de: "DE" }
 
 export function LanguageSwitcher() {
   const locale = useLocale()
@@ -18,11 +18,13 @@ export function LanguageSwitcher() {
 
   const handleSwitch = useCallback(
     (nextLocale: string) => {
+      // Set cookie for next-intl locale detection
+      document.cookie = `NEXT_LOCALE=${nextLocale};path=/;max-age=31536000`
       startTransition(() => {
         router.replace(pathname, { locale: nextLocale })
       })
     },
-    [pathname, router]
+    [pathname, router],
   )
 
   return (
@@ -38,7 +40,7 @@ export function LanguageSwitcher() {
           className={cn(
             "h-6 min-w-[2rem] px-1.5 text-xs font-medium",
             locale === loc &&
-              "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary"
+              "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary",
           )}
         >
           {localeLabels[loc]}
