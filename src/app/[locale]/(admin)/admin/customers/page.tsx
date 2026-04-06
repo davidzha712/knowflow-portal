@@ -35,6 +35,7 @@ export default function AdminCustomersPage() {
   const [createName, setCreateName] = useState("")
   const [createCompany, setCreateCompany] = useState("")
   const [creating, setCreating] = useState(false)
+  const [error, setError] = useState("")
 
   const load = useCallback(() => {
     setLoading(true)
@@ -50,6 +51,7 @@ export default function AdminCustomersPage() {
   const handleCreate = async () => {
     if (!createEmail.trim()) return
     setCreating(true)
+    setError("")
     try {
       const res = await fetch("/api/admin/customers", {
         method: "POST",
@@ -60,15 +62,19 @@ export default function AdminCustomersPage() {
           company: createCompany.trim() || undefined,
         }),
       })
-      if (res.ok) {
-        setShowCreate(false)
-        setCreateEmail("")
-        setCreateName("")
-        setCreateCompany("")
-        load()
+      const json = await res.json()
+      if (!res.ok) {
+        setError(json.error ?? `Error ${res.status}`)
+        return
       }
-    } catch {
-      // handle error
+      setShowCreate(false)
+      setCreateEmail("")
+      setCreateName("")
+      setCreateCompany("")
+      setError("")
+      load()
+    } catch (e) {
+      setError("Network error. Please try again.")
     } finally {
       setCreating(false)
     }
@@ -171,6 +177,9 @@ export default function AdminCustomersPage() {
                 placeholder="Acme Corp"
               />
             </div>
+            {error && (
+              <p className="text-sm text-destructive">{error}</p>
+            )}
             <div className="flex gap-2 pt-2">
               <Button variant="outline" size="sm" onClick={() => setShowCreate(false)} className="flex-1">
                 Cancel

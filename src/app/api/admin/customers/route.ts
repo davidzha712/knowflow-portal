@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import { NextResponse } from "next/server"
 import { desc, eq } from "drizzle-orm"
 import { z } from "zod"
@@ -55,11 +56,11 @@ export async function POST(request: Request) {
       })
     }
 
-    // Create with a placeholder clerkId (admin-created customers may not have Clerk accounts)
+    // Create with a UUID-based clerkId (admin-created customers don't have Clerk accounts)
     const [created] = await db
       .insert(customers)
       .values({
-        clerkId: `admin_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        clerkId: `manual_${randomUUID()}`,
         email: parsed.email,
         name: parsed.name ?? null,
         company: parsed.company ?? null,

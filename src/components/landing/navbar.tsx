@@ -15,7 +15,6 @@ import {
 import { Link } from "@/i18n/navigation"
 import { ThemeToggle } from "./theme-toggle"
 import { LanguageSwitcher } from "./language-switcher"
-import { Shield } from "lucide-react"
 
 const navLinks = ["features", "pricing", "docs", "contact"] as const
 
@@ -83,12 +82,8 @@ export function Navbar() {
           <Button variant="ghost" size="sm" render={<Link href="/sign-in" />}>
             {t("signIn")}
           </Button>
-          <Button variant="outline" size="sm" render={<Link href="/dashboard" />}>
-            {t("portal")}
-          </Button>
-          <Button size="sm" render={<Link href="/admin" />}>
-            <Shield className="size-3.5" />
-            Admin
+          <Button size="sm" onClick={() => scrollToSection("pricing")}>
+            {t("getStarted")}
           </Button>
         </div>
 
@@ -131,9 +126,9 @@ export function Navbar() {
                 </Button>
                 <Button
                   className="w-full"
-                  render={<Link href="/dashboard" />}
+                  onClick={() => scrollToSection("pricing")}
                 >
-                  {t("portal")}
+                  {t("getStarted")}
                 </Button>
               </div>
             </SheetContent>
