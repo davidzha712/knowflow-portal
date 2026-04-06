@@ -10,6 +10,7 @@ import {
   Settings,
   Menu,
   X,
+  Crown,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState, useCallback } from "react"
@@ -19,6 +20,7 @@ const navItems = [
   { href: "/licenses", label: "Licenses", icon: Key },
   { href: "/activate", label: "Activate", icon: Shield },
   { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/admin", label: "Admin Panel", icon: Crown },
 ] as const
 
 function NavLink({

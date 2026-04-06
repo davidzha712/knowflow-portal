@@ -15,6 +15,7 @@ import {
 import { Link } from "@/i18n/navigation"
 import { ThemeToggle } from "./theme-toggle"
 import { LanguageSwitcher } from "./language-switcher"
+import { Shield } from "lucide-react"
 
 const navLinks = ["features", "pricing", "docs", "contact"] as const
 
@@ -82,8 +83,12 @@ export function Navbar() {
           <Button variant="ghost" size="sm" render={<Link href="/sign-in" />}>
             {t("signIn")}
           </Button>
-          <Button size="sm" render={<Link href="/dashboard" />}>
+          <Button variant="outline" size="sm" render={<Link href="/dashboard" />}>
             {t("portal")}
+          </Button>
+          <Button size="sm" render={<Link href="/admin" />}>
+            <Shield className="size-3.5" />
+            Admin
           </Button>
         </div>
 

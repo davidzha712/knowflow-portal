@@ -5,16 +5,18 @@ import { routing } from "./i18n/routing"
 
 const intlMiddleware = createMiddleware(routing)
 
-// Portal routes that require authentication (any locale prefix)
+// Portal + Admin routes that require authentication (any locale prefix)
 const isProtectedRoute = createRouteMatcher([
   "/(.*)/dashboard(.*)",
   "/(.*)/licenses(.*)",
   "/(.*)/activate(.*)",
   "/(.*)/settings(.*)",
+  "/(.*)/admin(.*)",
   "/dashboard(.*)",
   "/licenses(.*)",
   "/activate(.*)",
   "/settings(.*)",
+  "/admin(.*)",
 ])
 
 export function proxy(request: NextRequest) {
