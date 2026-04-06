@@ -49,9 +49,12 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetch("/api/admin/stats")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
       .then(setStats)
-      .catch(() => {})
+      .catch(() => setStats({ customers: 0, licenses: 0, activeActivations: 0 }))
   }, [])
 
   return (
