@@ -63,11 +63,11 @@ function signPayload(tier: string, expiry: string, fingerprintHash: string): str
 
   const signature = sign.sign(getPrivateKey())
   // URL-safe base64 to match Python's base64.urlsafe_b64encode
+  // MUST keep trailing '=' padding — Python's urlsafe_b64decode requires it
   return signature
     .toString("base64")
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
-    .replace(/=+$/, "")
 }
 
 /**
