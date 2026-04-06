@@ -29,8 +29,8 @@ export default function IssueLicensePage() {
   // Form state
   const [customerId, setCustomerId] = useState("")
   const [tier, setTier] = useState<"pro" | "enterprise">("pro")
-  const [maxActivations, setMaxActivations] = useState(3)
-  const [expiryMonths, setExpiryMonths] = useState(12)
+  const [maxActivations, setMaxActivations] = useState("3")
+  const [expiryMonths, setExpiryMonths] = useState("12")
   const [activationRequest, setActivationRequest] = useState("")
 
   // Result state
@@ -56,7 +56,7 @@ export default function IssueLicensePage() {
     setResult(null)
 
     const expiresAt = new Date()
-    expiresAt.setMonth(expiresAt.getMonth() + expiryMonths)
+    expiresAt.setMonth(expiresAt.getMonth() + (parseInt(expiryMonths, 10) || 12))
 
     try {
       const res = await fetch("/api/admin/licenses/issue", {
@@ -65,7 +65,7 @@ export default function IssueLicensePage() {
         body: JSON.stringify({
           customerId,
           tier,
-          maxActivations,
+          maxActivations: parseInt(maxActivations, 10) || 1,
           expiresAt: expiresAt.toISOString(),
           activationRequest: activationRequest.trim() || undefined,
         }),
@@ -143,8 +143,8 @@ export default function IssueLicensePage() {
                     type="button"
                     onClick={() => {
                       setTier(t)
-                      setMaxActivations(t === "enterprise" ? 10 : 3)
-                      setExpiryMonths(t === "enterprise" ? 24 : 12)
+                      setMaxActivations(t === "enterprise" ? "10" : "3")
+                      setExpiryMonths(t === "enterprise" ? "24" : "12")
                     }}
                     className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
                       tier === t
@@ -163,11 +163,11 @@ export default function IssueLicensePage() {
               <Label htmlFor="max-act">Max Activations</Label>
               <Input
                 id="max-act"
-                type="number"
-                min={1}
-                max={100}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={maxActivations}
-                onChange={(e) => setMaxActivations(Number(e.target.value))}
+                onChange={(e) => setMaxActivations(e.target.value.replace(/[^0-9]/g, ""))}
               />
             </div>
 
@@ -176,11 +176,11 @@ export default function IssueLicensePage() {
               <Label htmlFor="expiry">Validity (months)</Label>
               <Input
                 id="expiry"
-                type="number"
-                min={1}
-                max={60}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={expiryMonths}
-                onChange={(e) => setExpiryMonths(Number(e.target.value))}
+                onChange={(e) => setExpiryMonths(e.target.value.replace(/[^0-9]/g, ""))}
               />
             </div>
 
