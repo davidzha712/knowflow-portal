@@ -5,41 +5,50 @@ import { routing } from "./i18n/routing"
 
 const intlMiddleware = createMiddleware(routing)
 
-const isPortalRoute = createRouteMatcher(["/portal(.*)"])
-
-const clerkAuth = clerkMiddleware(async (auth, req) => {
-  const url = req.nextUrl.clone()
-  const pathname = url.pathname
-
-  // Skip auth for sign-in/sign-up routes
-  if (
-    pathname.startsWith("/portal/sign-in") ||
-    pathname.startsWith("/portal/sign-up")
-  ) {
-    return NextResponse.next()
-  }
-
-  // Protect all other portal routes
-  if (isPortalRoute(req)) {
-    await auth.protect()
-  }
-})
+// Portal routes that require authentication (any locale prefix)
+const isProtectedRoute = createRouteMatcher([
+  "/(.*)/dashboard(.*)",
+  "/(.*)/licenses(.*)",
+  "/(.*)/activate(.*)",
+  "/(.*)/settings(.*)",
+  "/dashboard(.*)",
+  "/licenses(.*)",
+  "/activate(.*)",
+  "/settings(.*)",
+])
 
 export function proxy(request: NextRequest) {
   const hostname = request.headers.get("host") ?? ""
-  const isPortal = hostname.startsWith("portal.")
+  const isPortalSubdomain = hostname.startsWith("portal.")
 
-  if (isPortal) {
-    const url = request.nextUrl.clone()
-    if (!url.pathname.startsWith("/portal")) {
-      url.pathname = `/portal${url.pathname}`
-      const rewrittenRequest = new NextRequest(url, request)
-      return clerkAuth(rewrittenRequest, {} as never)
-    }
-    return clerkAuth(request, {} as never)
+  // For portal subdomain, apply Clerk auth to all routes
+  if (isPortalSubdomain) {
+    return clerkMiddleware(async (auth, req) => {
+      const pathname = req.nextUrl.pathname
+      // Allow sign-in/sign-up
+      if (pathname.includes("/sign-in") || pathname.includes("/sign-up")) {
+        return intlMiddleware(req)
+      }
+      await auth.protect()
+      return intlMiddleware(req)
+    })(request, {} as never)
   }
 
-  return intlMiddleware(request)
+  // For main domain, protect only portal pages (dashboard, licenses, etc.)
+  const response = intlMiddleware(request)
+
+  if (isProtectedRoute(request)) {
+    return clerkMiddleware(async (auth, req) => {
+      const pathname = req.nextUrl.pathname
+      if (pathname.includes("/sign-in") || pathname.includes("/sign-up")) {
+        return intlMiddleware(req)
+      }
+      await auth.protect()
+      return intlMiddleware(req)
+    })(request, {} as never)
+  }
+
+  return response
 }
 
 export const config = {

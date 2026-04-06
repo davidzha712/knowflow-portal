@@ -1,9 +1,10 @@
-import { SignUp } from "@clerk/nextjs"
+import { SignIn } from "@clerk/nextjs"
 
-export default function SignUpPage() {
+export default function SignInPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
-      <SignUp
+      <SignIn
+        forceRedirectUrl="/dashboard"
         appearance={{
           elements: {
             rootBox: "mx-auto",
