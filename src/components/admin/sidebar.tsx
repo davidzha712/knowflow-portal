@@ -12,6 +12,7 @@ import {
   ArrowLeft,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { LanguageSwitcher } from "@/components/landing/language-switcher"
 
 const navKeys = [
   { href: "/admin", tKey: "dashboard", icon: LayoutDashboard, exact: true },
@@ -65,8 +66,11 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      {/* Back to portal */}
-      <div className="border-t border-border px-3 py-3">
+      {/* Language + Back to portal */}
+      <div className="border-t border-border px-3 py-3 space-y-2">
+        <div className="px-1">
+          <LanguageSwitcher />
+        </div>
         <Link
           href="/dashboard"
           className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"

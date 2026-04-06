@@ -1,9 +1,15 @@
 import { currentUser } from "@clerk/nextjs/server"
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
-  .split(",")
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean)
+/**
+ * Read admin emails at call time (not module load time) so env vars
+ * that are injected after cold start are picked up correctly.
+ */
+function getAdminEmails(): string[] {
+  return (process.env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean)
+}
 
 /**
  * Check if the current Clerk user is an admin.
@@ -14,7 +20,8 @@ export async function requireAdmin() {
   if (!user) return null
 
   const email = user.primaryEmailAddress?.emailAddress?.toLowerCase()
-  if (!email || !ADMIN_EMAILS.includes(email)) return null
+  const adminEmails = getAdminEmails()
+  if (!email || !adminEmails.includes(email)) return null
 
   return user
 }
@@ -27,5 +34,6 @@ export async function isAdmin(): Promise<boolean> {
   if (!user) return false
 
   const email = user.primaryEmailAddress?.emailAddress?.toLowerCase()
-  return Boolean(email && ADMIN_EMAILS.includes(email))
+  const adminEmails = getAdminEmails()
+  return Boolean(email && adminEmails.includes(email))
 }

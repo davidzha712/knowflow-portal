@@ -68,7 +68,7 @@ export function Navbar() {
             <button
               key={link}
               onClick={() => scrollToSection(link)}
-              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {t(link)}
             </button>
@@ -76,13 +76,13 @@ export function Navbar() {
         </nav>
 
         {/* Desktop right section */}
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden shrink-0 items-center gap-2 md:flex">
           <LanguageSwitcher />
           <ThemeToggle />
-          <Button variant="ghost" size="sm" render={<Link href="/sign-in" />}>
+          <Button variant="ghost" size="sm" className="whitespace-nowrap" render={<Link href="/sign-in" />}>
             {t("signIn")}
           </Button>
-          <Button size="sm" onClick={() => scrollToSection("pricing")}>
+          <Button size="sm" className="whitespace-nowrap" onClick={() => scrollToSection("pricing")}>
             {t("getStarted")}
           </Button>
         </div>

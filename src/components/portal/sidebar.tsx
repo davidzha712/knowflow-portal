@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState, useCallback } from "react"
+import { LanguageSwitcher } from "@/components/landing/language-switcher"
 
 const navKeys = [
   { href: "/dashboard", tKey: "dashboard", icon: LayoutDashboard },
@@ -133,8 +134,9 @@ export function PortalSidebar() {
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="border-t border-border px-4 py-3">
+        {/* Language + Footer */}
+        <div className="border-t border-border px-4 py-3 space-y-2">
+          <LanguageSwitcher />
           <p className="text-xs text-muted-foreground">
             KnowFlow AI v0.1.0
           </p>
