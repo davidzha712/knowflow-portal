@@ -1,14 +1,22 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Users, Loader2 } from "lucide-react"
+import { useEffect, useState, useCallback } from "react"
+import { Users, Loader2, Plus } from "lucide-react"
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet"
 
 interface CustomerRow {
   id: string
@@ -22,20 +30,61 @@ interface CustomerRow {
 export default function AdminCustomersPage() {
   const [customers, setCustomers] = useState<CustomerRow[]>([])
   const [loading, setLoading] = useState(true)
+  const [showCreate, setShowCreate] = useState(false)
+  const [createEmail, setCreateEmail] = useState("")
+  const [createName, setCreateName] = useState("")
+  const [createCompany, setCreateCompany] = useState("")
+  const [creating, setCreating] = useState(false)
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true)
     fetch("/api/admin/customers")
       .then((r) => r.json())
       .then((res) => setCustomers(res.data ?? []))
-      .catch(() => {})
+      .catch(() => setCustomers([]))
       .finally(() => setLoading(false))
   }, [])
 
+  useEffect(() => { load() }, [load])
+
+  const handleCreate = async () => {
+    if (!createEmail.trim()) return
+    setCreating(true)
+    try {
+      const res = await fetch("/api/admin/customers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: createEmail.trim(),
+          name: createName.trim() || undefined,
+          company: createCompany.trim() || undefined,
+        }),
+      })
+      if (res.ok) {
+        setShowCreate(false)
+        setCreateEmail("")
+        setCreateName("")
+        setCreateCompany("")
+        load()
+      }
+    } catch {
+      // handle error
+    } finally {
+      setCreating(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Customers</h1>
-        <p className="text-muted-foreground">All registered customers.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Customers</h1>
+          <p className="text-muted-foreground">All registered customers.</p>
+        </div>
+        <Button size="sm" onClick={() => setShowCreate(true)}>
+          <Plus className="size-3.5" />
+          Create Customer
+        </Button>
       </div>
 
       {loading ? (
@@ -47,6 +96,10 @@ export default function AdminCustomersPage() {
           <CardContent className="flex flex-col items-center py-12">
             <Users className="size-10 text-muted-foreground/50" />
             <p className="mt-3 text-sm text-muted-foreground">No customers yet.</p>
+            <Button size="sm" className="mt-4" onClick={() => setShowCreate(true)}>
+              <Plus className="size-3.5" />
+              Create First Customer
+            </Button>
           </CardContent>
         </Card>
       ) : (
@@ -79,6 +132,57 @@ export default function AdminCustomersPage() {
           </table>
         </div>
       )}
+
+      {/* Create Customer Sheet */}
+      <Sheet open={showCreate} onOpenChange={setShowCreate}>
+        <SheetContent side="right" className="w-80 sm:max-w-sm">
+          <SheetHeader>
+            <SheetTitle>Create Customer</SheetTitle>
+            <SheetDescription>
+              Add a new customer to issue licenses for.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="mt-4 space-y-3 px-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="cust-email">Email *</Label>
+              <Input
+                id="cust-email"
+                type="email"
+                value={createEmail}
+                onChange={(e) => setCreateEmail(e.target.value)}
+                placeholder="customer@company.com"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="cust-name">Name</Label>
+              <Input
+                id="cust-name"
+                value={createName}
+                onChange={(e) => setCreateName(e.target.value)}
+                placeholder="John Doe"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="cust-company">Company</Label>
+              <Input
+                id="cust-company"
+                value={createCompany}
+                onChange={(e) => setCreateCompany(e.target.value)}
+                placeholder="Acme Corp"
+              />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setShowCreate(false)} className="flex-1">
+                Cancel
+              </Button>
+              <Button size="sm" onClick={handleCreate} disabled={creating || !createEmail.trim()} className="flex-1">
+                {creating && <Loader2 className="size-3.5 animate-spin" />}
+                Create
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }
