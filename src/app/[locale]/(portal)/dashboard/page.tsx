@@ -1,7 +1,8 @@
 import { currentUser } from "@clerk/nextjs/server"
-import { eq, and, isNull, gte } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import { Key, Shield, AlertTriangle, Plus, Zap } from "lucide-react"
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 import {
   Card,
   CardContent,
@@ -12,18 +13,16 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { db } from "@/lib/db"
-import { customers, licenses, activations } from "@/lib/db/schema"
+import { customers } from "@/lib/db/schema"
 
 function StatCard({
   title,
   value,
   icon: Icon,
-  description,
 }: {
   title: string
   value: number
   icon: React.ComponentType<{ className?: string }>
-  description: string
 }) {
   return (
     <Card>
@@ -34,9 +33,6 @@ function StatCard({
           <Icon className="size-5 text-muted-foreground" />
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="text-xs text-muted-foreground">{description}</p>
-      </CardContent>
     </Card>
   )
 }
@@ -46,7 +42,6 @@ function statusBadgeVariant(status: string, expiresAt: Date | null) {
   const thirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
   if (expiresAt && expiresAt < thirtyDays) return "destructive" as const
   if (status === "active") return "secondary" as const
-  if (status === "revoked") return "outline" as const
   return "outline" as const
 }
 
@@ -57,111 +52,72 @@ function getDisplayStatus(status: string, expiresAt: Date | null): string {
   return status ?? "active"
 }
 
-function maskLicenseKey(key: string): string {
+function maskKey(key: string): string {
   if (key.length <= 8) return key
   return key.slice(0, 3) + "-XXXX-XXXX-" + key.slice(-4)
 }
 
 export default async function DashboardPage() {
   const user = await currentUser()
-  const displayName = user?.firstName ?? user?.username ?? "there"
+  const t = await getTranslations("portal")
+  const displayName = user?.firstName ?? user?.username ?? ""
 
-  // Fetch customer and licenses from DB
   const customer = user?.id
     ? await db.query.customers.findFirst({
         where: eq(customers.clerkId, user.id),
-        with: {
-          licenses: {
-            with: { activations: true },
-          },
-        },
+        with: { licenses: { with: { activations: true } } },
       })
     : null
 
   const userLicenses = customer?.licenses ?? []
-
-  // Calculate real stats
   const totalLicenses = userLicenses.length
   const activeActivationCount = userLicenses.reduce((sum, lic) => {
-    const active = (lic.activations ?? []).filter((a) => !a.revokedAt)
-    return sum + active.length
+    return sum + (lic.activations ?? []).filter((a) => !a.revokedAt).length
   }, 0)
   const thirtyDaysFromNow = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
   const expiringSoon = userLicenses.filter(
-    (lic) =>
-      lic.status === "active" &&
-      lic.expiresAt &&
-      lic.expiresAt < thirtyDaysFromNow &&
-      lic.expiresAt > new Date(),
+    (lic) => lic.status === "active" && lic.expiresAt && lic.expiresAt < thirtyDaysFromNow && lic.expiresAt > new Date(),
   ).length
 
   return (
     <div className="space-y-8">
-      {/* Welcome header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
-          Welcome back, {displayName}
+          {t("welcome", { name: displayName })}
         </h1>
-        <p className="text-muted-foreground">
-          Manage your KnowFlow AI licenses and activations.
-        </p>
+        <p className="text-muted-foreground">{t("manageDesc")}</p>
       </div>
 
-      {/* Stats row */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard
-          title="Total Licenses"
-          value={totalLicenses}
-          icon={Key}
-          description="Across all tiers"
-        />
-        <StatCard
-          title="Active Activations"
-          value={activeActivationCount}
-          icon={Shield}
-          description="Machines currently activated"
-        />
-        <StatCard
-          title="Expiring Soon"
-          value={expiringSoon}
-          icon={AlertTriangle}
-          description="Within the next 30 days"
-        />
+        <StatCard title={t("totalLicenses")} value={totalLicenses} icon={Key} />
+        <StatCard title={t("activeActivations")} value={activeActivationCount} icon={Shield} />
+        <StatCard title={t("expiringSoon")} value={expiringSoon} icon={AlertTriangle} />
       </div>
 
-      {/* Quick actions */}
       <div className="flex flex-wrap gap-3">
         <Button render={<Link href="/licenses" />}>
           <Plus className="size-4" />
-          Purchase License
+          {t("purchaseLicense")}
         </Button>
         <Button variant="outline" render={<Link href="/activate" />}>
           <Zap className="size-4" />
-          Activate License
+          {t("activateLicense")}
         </Button>
       </div>
 
-      {/* Recent licenses */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Recent Licenses</h2>
+        <h2 className="text-lg font-semibold">{t("recentLicenses")}</h2>
         {userLicenses.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center">
-              <p className="text-sm text-muted-foreground">
-                No licenses yet. Purchase your first license to get started.
-              </p>
+              <p className="text-sm text-muted-foreground">{t("noLicenses")}</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-3">
             {userLicenses.slice(0, 5).map((license) => {
-              const activeCount = (license.activations ?? []).filter(
-                (a) => !a.revokedAt,
-              ).length
-              const displayStatus = getDisplayStatus(
-                license.status ?? "active",
-                license.expiresAt,
-              )
+              const activeCount = (license.activations ?? []).filter((a) => !a.revokedAt).length
+              const displayStatus = getDisplayStatus(license.status ?? "active", license.expiresAt)
               return (
                 <Card key={license.id} size="sm">
                   <CardContent className="flex items-center gap-4">
@@ -170,35 +126,16 @@ export default async function DashboardPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium font-mono truncate">
-                          {maskLicenseKey(license.licenseKey)}
-                        </p>
-                        <Badge
-                          variant={statusBadgeVariant(
-                            license.status ?? "active",
-                            license.expiresAt,
-                          )}
-                        >
+                        <p className="text-sm font-medium font-mono truncate">{maskKey(license.licenseKey)}</p>
+                        <Badge variant={statusBadgeVariant(license.status ?? "active", license.expiresAt)}>
                           {displayStatus}
                         </Badge>
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {license.tier.charAt(0).toUpperCase() +
-                          license.tier.slice(1)}{" "}
-                        &middot; {activeCount}/{license.maxActivations ?? 1}{" "}
-                        activations &middot; Expires{" "}
-                        {license.expiresAt
-                          ? license.expiresAt.toLocaleDateString()
-                          : "N/A"}
+                        {license.tier.charAt(0).toUpperCase() + license.tier.slice(1)} &middot; {activeCount}/{license.maxActivations ?? 1} {t("activations")} &middot; {t("expires")} {license.expiresAt?.toLocaleDateString() ?? "N/A"}
                       </p>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      render={<Link href="/licenses" />}
-                    >
-                      View
-                    </Button>
+                    <Button variant="ghost" size="sm" render={<Link href="/licenses" />}>View</Button>
                   </CardContent>
                 </Card>
               )

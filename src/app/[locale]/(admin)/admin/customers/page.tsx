@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
+import { useTranslations } from "next-intl"
 import { Users, Loader2, Plus } from "lucide-react"
 import {
   Card,
@@ -28,6 +29,7 @@ interface CustomerRow {
 }
 
 export default function AdminCustomersPage() {
+  const t = useTranslations("admin")
   const [customers, setCustomers] = useState<CustomerRow[]>([])
   const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
@@ -84,12 +86,12 @@ export default function AdminCustomersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Customers</h1>
-          <p className="text-muted-foreground">All registered customers.</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("customers")}</h1>
+          <p className="text-muted-foreground">{t("customersDesc")}</p>
         </div>
         <Button size="sm" onClick={() => setShowCreate(true)}>
           <Plus className="size-3.5" />
-          Create Customer
+          {t("createCustomer")}
         </Button>
       </div>
 
@@ -101,10 +103,10 @@ export default function AdminCustomersPage() {
         <Card>
           <CardContent className="flex flex-col items-center py-12">
             <Users className="size-10 text-muted-foreground/50" />
-            <p className="mt-3 text-sm text-muted-foreground">No customers yet.</p>
+            <p className="mt-3 text-sm text-muted-foreground">{t("noCustomers")}</p>
             <Button size="sm" className="mt-4" onClick={() => setShowCreate(true)}>
               <Plus className="size-3.5" />
-              Create First Customer
+              {t("createFirst")}
             </Button>
           </CardContent>
         </Card>
@@ -113,11 +115,11 @@ export default function AdminCustomersPage() {
           <table className="w-full text-sm">
             <thead className="border-b bg-muted/50">
               <tr>
-                <th className="px-4 py-3 text-left font-medium">Email</th>
-                <th className="px-4 py-3 text-left font-medium">Name</th>
-                <th className="px-4 py-3 text-left font-medium">Company</th>
-                <th className="px-4 py-3 text-left font-medium">Licenses</th>
-                <th className="px-4 py-3 text-left font-medium">Joined</th>
+                <th className="px-4 py-3 text-left font-medium">{t("email")}</th>
+                <th className="px-4 py-3 text-left font-medium">{t("name")}</th>
+                <th className="px-4 py-3 text-left font-medium">{t("company")}</th>
+                <th className="px-4 py-3 text-left font-medium">{t("allLicenses")}</th>
+                <th className="px-4 py-3 text-left font-medium">{t("joined")}</th>
               </tr>
             </thead>
             <tbody>
@@ -143,9 +145,9 @@ export default function AdminCustomersPage() {
       <Sheet open={showCreate} onOpenChange={setShowCreate}>
         <SheetContent side="right" className="w-80 sm:max-w-sm">
           <SheetHeader>
-            <SheetTitle>Create Customer</SheetTitle>
+            <SheetTitle>{t("createCustomer")}</SheetTitle>
             <SheetDescription>
-              Add a new customer to issue licenses for.
+              {t("createCustomerDesc")}
             </SheetDescription>
           </SheetHeader>
           <div className="mt-4 space-y-3 px-4">
@@ -182,11 +184,11 @@ export default function AdminCustomersPage() {
             )}
             <div className="flex gap-2 pt-2">
               <Button variant="outline" size="sm" onClick={() => setShowCreate(false)} className="flex-1">
-                Cancel
+                {t("cancel")}
               </Button>
               <Button size="sm" onClick={handleCreate} disabled={creating || !createEmail.trim()} className="flex-1">
                 {creating && <Loader2 className="size-3.5 animate-spin" />}
-                Create
+                {t("create")}
               </Button>
             </div>
           </div>

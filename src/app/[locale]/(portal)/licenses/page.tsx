@@ -2,6 +2,7 @@ import { currentUser } from "@clerk/nextjs/server"
 import { eq } from "drizzle-orm"
 import { Key, Download, Zap, PackageOpen } from "lucide-react"
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 import {
   Card,
   CardContent,
@@ -30,53 +31,19 @@ function getDisplayStatus(status: string, expiresAt: Date | null): string {
   return status ?? "active"
 }
 
-function tierColor(tier: string): string {
-  switch (tier) {
-    case "enterprise":
-      return "bg-violet-500/10 text-violet-400"
-    case "pro":
-      return "bg-blue-500/10 text-blue-400"
-    case "free":
-      return "bg-emerald-500/10 text-emerald-400"
-    default:
-      return "bg-muted text-muted-foreground"
-  }
-}
-
 function maskKey(key: string): string {
   if (key.length <= 8) return key
   return key.slice(0, 3) + "-XXXX-XXXX-" + key.slice(-4)
 }
 
-function EmptyState() {
-  return (
-    <Card>
-      <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="flex size-16 items-center justify-center rounded-full bg-muted">
-          <PackageOpen className="size-8 text-muted-foreground" />
-        </div>
-        <h3 className="mt-4 text-lg font-semibold">No licenses yet</h3>
-        <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-          Purchase your first KnowFlow AI license to get started with
-          enterprise-grade RAG capabilities.
-        </p>
-        <Button className="mt-6">Purchase License</Button>
-      </CardContent>
-    </Card>
-  )
-}
-
 export default async function LicensesPage() {
   const user = await currentUser()
+  const t = await getTranslations("portal")
 
   const customer = user?.id
     ? await db.query.customers.findFirst({
         where: eq(customers.clerkId, user.id),
-        with: {
-          licenses: {
-            with: { activations: true },
-          },
-        },
+        with: { licenses: { with: { activations: true } } },
       })
     : null
 
@@ -84,32 +51,30 @@ export default async function LicensesPage() {
 
   return (
     <div className="space-y-8">
-      {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">My Licenses</h1>
-          <p className="text-muted-foreground">
-            View and manage your KnowFlow AI license keys.
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("myLicenses")}</h1>
+          <p className="text-muted-foreground">{t("myLicensesDesc")}</p>
         </div>
-        <Button>Purchase License</Button>
+        <Button>{t("purchaseLicense")}</Button>
       </div>
 
-      {/* License list */}
       {userLicenses.length === 0 ? (
-        <EmptyState />
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="flex size-16 items-center justify-center rounded-full bg-muted">
+              <PackageOpen className="size-8 text-muted-foreground" />
+            </div>
+            <h3 className="mt-4 text-lg font-semibold">{t("noLicenses")}</h3>
+            <Button className="mt-6">{t("purchaseLicense")}</Button>
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid gap-4">
           {userLicenses.map((license) => {
-            const activeCount = (license.activations ?? []).filter(
-              (a) => !a.revokedAt,
-            ).length
-            const displayStatus = getDisplayStatus(
-              license.status ?? "active",
-              license.expiresAt,
-            )
-            const tierLabel =
-              license.tier.charAt(0).toUpperCase() + license.tier.slice(1)
+            const activeCount = (license.activations ?? []).filter((a) => !a.revokedAt).length
+            const displayStatus = getDisplayStatus(license.status ?? "active", license.expiresAt)
+            const tierLabel = license.tier.charAt(0).toUpperCase() + license.tier.slice(1)
 
             return (
               <Card key={license.id}>
@@ -120,107 +85,51 @@ export default async function LicensesPage() {
                         <Key className="size-4 text-muted-foreground" />
                       </div>
                       <div>
-                        <CardTitle className="font-mono text-base">
-                          {maskKey(license.licenseKey)}
-                        </CardTitle>
-                        <CardDescription>
-                          Issued{" "}
-                          {license.createdAt
-                            ? license.createdAt.toLocaleDateString()
-                            : "—"}
-                        </CardDescription>
+                        <CardTitle className="font-mono text-base">{maskKey(license.licenseKey)}</CardTitle>
+                        <CardDescription>{t("issued")} {license.createdAt?.toLocaleDateString() ?? "—"}</CardDescription>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${tierColor(license.tier)}`}
-                      >
-                        {tierLabel}
-                      </span>
-                      <Badge
-                        variant={statusBadgeVariant(
-                          license.status ?? "active",
-                          license.expiresAt,
-                        )}
-                      >
-                        {displayStatus}
-                      </Badge>
-                    </div>
+                    <Badge variant={statusBadgeVariant(license.status ?? "active", license.expiresAt)}>
+                      {displayStatus}
+                    </Badge>
                   </div>
                 </CardHeader>
 
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                     <div>
-                      <p className="text-xs text-muted-foreground">
-                        Activations
-                      </p>
-                      <p className="text-sm font-medium">
-                        {activeCount} / {license.maxActivations ?? 1}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{t("activations")}</p>
+                      <p className="text-sm font-medium">{activeCount} / {license.maxActivations ?? 1}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Tier</p>
-                      <p className="text-sm font-medium">{tierLabel}</p>
+                      <p className="text-xs text-muted-foreground">{t("issued")}</p>
+                      <p className="text-sm font-medium">{license.createdAt?.toLocaleDateString() ?? "—"}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Issued</p>
-                      <p className="text-sm font-medium">
-                        {license.createdAt
-                          ? license.createdAt.toLocaleDateString()
-                          : "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Expires</p>
-                      <p className="text-sm font-medium">
-                        {license.expiresAt
-                          ? license.expiresAt.toLocaleDateString()
-                          : "—"}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{t("expires")}</p>
+                      <p className="text-sm font-medium">{license.expiresAt?.toLocaleDateString() ?? "—"}</p>
                     </div>
                   </div>
 
-                  {/* Activation progress bar */}
                   <div className="mt-4">
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>Activation usage</span>
-                      <span>
-                        {activeCount}/{license.maxActivations ?? 1}
-                      </span>
+                      <span>{t("activationUsage")}</span>
+                      <span>{activeCount}/{license.maxActivations ?? 1}</span>
                     </div>
                     <div className="mt-1 h-1.5 w-full rounded-full bg-muted">
-                      <div
-                        className="h-full rounded-full bg-primary transition-all"
-                        style={{
-                          width: `${(activeCount / (license.maxActivations ?? 1)) * 100}%`,
-                        }}
-                      />
+                      <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${(activeCount / (license.maxActivations ?? 1)) * 100}%` }} />
                     </div>
                   </div>
                 </CardContent>
 
                 <CardFooter className="gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    render={<Link href="/activate" />}
-                  >
+                  <Button variant="outline" size="sm" render={<Link href="/activate" />}>
                     <Zap className="size-3.5" />
-                    Activate
+                    {t("activate")}
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    render={
-                      <a
-                        href={`/api/licenses/${license.id}/certificate`}
-                        download
-                      />
-                    }
-                  >
+                  <Button variant="outline" size="sm" render={<a href={`/api/licenses/${license.id}/certificate`} download />}>
                     <Download className="size-3.5" />
-                    Certificate
+                    {t("certificate")}
                   </Button>
                 </CardFooter>
               </Card>

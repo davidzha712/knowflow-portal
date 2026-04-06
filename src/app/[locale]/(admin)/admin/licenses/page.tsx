@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
+import { useTranslations } from "next-intl"
 import { Key, Loader2, Trash2, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import {
@@ -35,6 +36,7 @@ function maskKey(key: string): string {
 }
 
 export default function AdminLicensesPage() {
+  const t = useTranslations("admin")
   const [licenses, setLicenses] = useState<LicenseRow[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -50,7 +52,7 @@ export default function AdminLicensesPage() {
   useEffect(() => { load() }, [load])
 
   const handleRevoke = async (id: string) => {
-    if (!confirm("Revoke this license?")) return
+    if (!confirm(t("revokeLicense"))) return
     await fetch(`/api/admin/licenses/${id}`, { method: "DELETE" })
     load()
   }
@@ -59,15 +61,15 @@ export default function AdminLicensesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">All Licenses</h1>
-          <p className="text-muted-foreground">System-wide license management.</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("allLicenses")}</h1>
+          <p className="text-muted-foreground">{t("allLicensesDesc")}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={load}>
             <RefreshCw className="size-3.5" />
           </Button>
           <Button size="sm" render={<Link href="/admin/licenses/issue" />}>
-            Issue License
+            {t("issueLicense")}
           </Button>
         </div>
       </div>
@@ -80,7 +82,7 @@ export default function AdminLicensesPage() {
         <Card>
           <CardContent className="flex flex-col items-center py-12">
             <Key className="size-10 text-muted-foreground/50" />
-            <p className="mt-3 text-sm text-muted-foreground">No licenses issued yet.</p>
+            <p className="mt-3 text-sm text-muted-foreground">{t("noLicenses")}</p>
           </CardContent>
         </Card>
       ) : (
@@ -88,13 +90,13 @@ export default function AdminLicensesPage() {
           <table className="w-full text-sm">
             <thead className="border-b bg-muted/50">
               <tr>
-                <th className="px-4 py-3 text-left font-medium">License Key</th>
-                <th className="px-4 py-3 text-left font-medium">Customer</th>
-                <th className="px-4 py-3 text-left font-medium">Tier</th>
-                <th className="px-4 py-3 text-left font-medium">Status</th>
+                <th className="px-4 py-3 text-left font-medium">{t("licenseKey")}</th>
+                <th className="px-4 py-3 text-left font-medium">{t("customer")}</th>
+                <th className="px-4 py-3 text-left font-medium">{t("tier")}</th>
+                <th className="px-4 py-3 text-left font-medium">{t("status")}</th>
                 <th className="px-4 py-3 text-left font-medium">Activations</th>
                 <th className="px-4 py-3 text-left font-medium">Expires</th>
-                <th className="px-4 py-3 text-right font-medium">Actions</th>
+                <th className="px-4 py-3 text-right font-medium">{t("actions")}</th>
               </tr>
             </thead>
             <tbody>

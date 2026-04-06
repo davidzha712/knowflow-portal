@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { UserButton } from "@clerk/nextjs"
+import { useTranslations } from "next-intl"
 import {
   LayoutDashboard,
   Key,
@@ -15,12 +16,12 @@ import {
 import { cn } from "@/lib/utils"
 import { useState, useCallback } from "react"
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/licenses", label: "Licenses", icon: Key },
-  { href: "/activate", label: "Activate", icon: Shield },
-  { href: "/settings", label: "Settings", icon: Settings },
-  { href: "/admin", label: "Admin Panel", icon: Crown },
+const navKeys = [
+  { href: "/dashboard", tKey: "dashboard", icon: LayoutDashboard },
+  { href: "/licenses", tKey: "licenses", icon: Key },
+  { href: "/activate", tKey: "activate", icon: Shield },
+  { href: "/settings", tKey: "settings", icon: Settings },
+  { href: "/admin", tKey: "adminPanel", icon: Crown },
 ] as const
 
 function NavLink({
@@ -56,6 +57,7 @@ function NavLink({
 
 export function PortalSidebar() {
   const pathname = usePathname()
+  const t = useTranslations("portal")
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const closeMobile = useCallback(() => {
@@ -106,7 +108,7 @@ export function PortalSidebar() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold truncate">KnowFlow Portal</p>
-            <p className="text-xs text-muted-foreground">License Management</p>
+            <p className="text-xs text-muted-foreground">{t("licenses")}</p>
           </div>
           <UserButton
             appearance={{
@@ -119,11 +121,11 @@ export function PortalSidebar() {
 
         {/* Navigation */}
         <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Portal navigation">
-          {navItems.map((item) => (
+          {navKeys.map((item) => (
             <NavLink
               key={item.href}
               href={item.href}
-              label={item.label}
+              label={t(item.tKey)}
               icon={item.icon}
               isActive={pathname === item.href || pathname.startsWith(`${item.href}/`)}
               onClick={closeMobile}

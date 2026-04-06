@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Users, Key, Shield, Loader2 } from "lucide-react"
 import Link from "next/link"
 import {
@@ -45,6 +46,7 @@ function StatCard({
 }
 
 export default function AdminDashboardPage() {
+  const t = useTranslations("admin")
   const [stats, setStats] = useState<Stats | null>(null)
 
   useEffect(() => {
@@ -60,27 +62,25 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
-        <p className="text-muted-foreground">
-          Manage customers, licenses, and activations.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t("dashboard")}</h1>
+        <p className="text-muted-foreground">{t("dashboardDesc")}</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard title="Customers" value={stats?.customers ?? null} icon={Users} />
-        <StatCard title="Licenses" value={stats?.licenses ?? null} icon={Key} />
-        <StatCard title="Active Activations" value={stats?.activeActivations ?? null} icon={Shield} />
+        <StatCard title={t("customers")} value={stats?.customers ?? null} icon={Users} />
+        <StatCard title={t("allLicenses")} value={stats?.licenses ?? null} icon={Key} />
+        <StatCard title="Active" value={stats?.activeActivations ?? null} icon={Shield} />
       </div>
 
       <div className="flex gap-3">
         <Button render={<Link href="/admin/licenses/issue" />}>
-          Issue New License
+          {t("issueLicense")}
         </Button>
         <Button variant="outline" render={<Link href="/admin/customers" />}>
-          View Customers
+          {t("customers")}
         </Button>
         <Button variant="outline" render={<Link href="/admin/licenses" />}>
-          View Licenses
+          {t("allLicenses")}
         </Button>
       </div>
     </div>
