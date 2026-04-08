@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useTranslations } from "next-intl"
-import { Key, Loader2, Trash2, RefreshCw, CalendarPlus } from "lucide-react"
+import { Key, Loader2, Trash2, RefreshCw, CalendarPlus, ShieldOff, Copy, Check } from "lucide-react"
 import Link from "next/link"
 import {
   Card,
@@ -10,6 +10,13 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet"
 
 interface LicenseRow {
   id: string
@@ -57,6 +64,37 @@ export default function AdminLicensesPage() {
     load()
   }
 
+  // Unban token state
+  const [showUnban, setShowUnban] = useState(false)
+  const [unbanToken, setUnbanToken] = useState("")
+  const [unbanLoading, setUnbanLoading] = useState(false)
+  const [unbanCopied, setUnbanCopied] = useState(false)
+
+  const handleGenerateUnban = async () => {
+    setUnbanLoading(true)
+    try {
+      const res = await fetch("/api/admin/unban", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: "Admin manual unban" }),
+      })
+      const json = await res.json()
+      if (res.ok) {
+        setUnbanToken(json.unban_token)
+      }
+    } catch {
+      // error
+    } finally {
+      setUnbanLoading(false)
+    }
+  }
+
+  const handleCopyUnban = async () => {
+    await navigator.clipboard.writeText(unbanToken)
+    setUnbanCopied(true)
+    setTimeout(() => setUnbanCopied(false), 2000)
+  }
+
   const handleExtend = async (id: string) => {
     const months = prompt("Extend by how many months?", "12")
     if (!months) return
@@ -80,6 +118,10 @@ export default function AdminLicensesPage() {
           <p className="text-muted-foreground">{t("allLicensesDesc")}</p>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => { setShowUnban(true); setUnbanToken(""); }}>
+            <ShieldOff className="size-3.5" />
+            Unban
+          </Button>
           <Button variant="outline" size="sm" onClick={load}>
             <RefreshCw className="size-3.5" />
           </Button>
@@ -159,6 +201,53 @@ export default function AdminLicensesPage() {
           </table>
         </div>
       )}
+      {/* Unban Token Sheet */}
+      <Sheet open={showUnban} onOpenChange={setShowUnban}>
+        <SheetContent side="right" className="w-96 sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>Generate Unban Token</SheetTitle>
+            <SheetDescription>
+              Generate a time-limited token to unban a customer&apos;s KnowFlow instance.
+              Valid for 24 hours.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="mt-4 space-y-4 px-4">
+            {!unbanToken ? (
+              <Button
+                onClick={handleGenerateUnban}
+                disabled={unbanLoading}
+                className="w-full"
+              >
+                {unbanLoading && <Loader2 className="size-4 animate-spin" />}
+                Generate Unban Token
+              </Button>
+            ) : (
+              <div className="space-y-3">
+                <div className="rounded-lg bg-muted p-3">
+                  <p className="text-[10px] text-muted-foreground mb-1 font-medium">Unban Token (send to customer):</p>
+                  <code className="text-xs break-all block">{unbanToken}</code>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={handleCopyUnban}
+                >
+                  {unbanCopied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
+                  {unbanCopied ? "Copied" : "Copy Token"}
+                </Button>
+                <div className="rounded-lg border p-3 text-xs text-muted-foreground space-y-1">
+                  <p className="font-medium text-foreground">Instructions for customer:</p>
+                  <p>1. Go to KnowFlow Admin &gt; License tab</p>
+                  <p>2. Click &quot;Unban Instance&quot;</p>
+                  <p>3. Paste this token and submit</p>
+                  <p className="text-[10px] mt-2">Or via API: POST /api/v1/admin/system/unban</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }
