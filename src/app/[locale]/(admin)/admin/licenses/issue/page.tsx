@@ -102,6 +102,35 @@ export default function IssueLicensePage() {
         <p className="text-muted-foreground">{t("issueLicenseDesc")}</p>
       </div>
 
+      {/* Activation flow guide */}
+      <Card>
+        <CardContent className="py-4">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="flex items-start gap-3">
+              <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">1</div>
+              <div>
+                <p className="text-sm font-medium">Customer generates request</p>
+                <p className="text-xs text-muted-foreground">KnowFlow Admin &gt; License tab &gt; Generate Activation Request</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">2</div>
+              <div>
+                <p className="text-sm font-medium">You issue license here</p>
+                <p className="text-xs text-muted-foreground">Paste request code below &rarr; generates machine-bound key</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">3</div>
+              <div>
+                <p className="text-sm font-medium">Customer activates</p>
+                <p className="text-xs text-muted-foreground">KnowFlow Admin &gt; License tab &gt; Paste key &gt; Activate</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Form */}
         <Card>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useTranslations } from "next-intl"
-import { Key, Loader2, Trash2, RefreshCw } from "lucide-react"
+import { Key, Loader2, Trash2, RefreshCw, CalendarPlus } from "lucide-react"
 import Link from "next/link"
 import {
   Card,
@@ -54,6 +54,21 @@ export default function AdminLicensesPage() {
   const handleRevoke = async (id: string) => {
     if (!confirm(t("revokeLicense"))) return
     await fetch(`/api/admin/licenses/${id}`, { method: "DELETE" })
+    load()
+  }
+
+  const handleExtend = async (id: string) => {
+    const months = prompt("Extend by how many months?", "12")
+    if (!months) return
+    const n = parseInt(months, 10)
+    if (!n || n < 1) return
+    const newExpiry = new Date()
+    newExpiry.setMonth(newExpiry.getMonth() + n)
+    await fetch(`/api/admin/licenses/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ expiresAt: newExpiry.toISOString() }),
+    })
     load()
   }
 
@@ -115,15 +130,28 @@ export default function AdminLicensesPage() {
                     {l.expiresAt ? new Date(l.expiresAt).toLocaleDateString() : "—"}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    {l.status !== "revoked" && (
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={() => handleRevoke(l.id)}
-                      >
-                        <Trash2 className="size-3.5 text-destructive" />
-                      </Button>
-                    )}
+                    <div className="flex items-center justify-end gap-1">
+                      {l.status !== "revoked" && (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            title="Extend"
+                            onClick={() => handleExtend(l.id)}
+                          >
+                            <CalendarPlus className="size-3.5 text-primary" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            title="Revoke"
+                            onClick={() => handleRevoke(l.id)}
+                          >
+                            <Trash2 className="size-3.5 text-destructive" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
