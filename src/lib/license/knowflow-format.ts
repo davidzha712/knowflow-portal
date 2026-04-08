@@ -78,6 +78,26 @@ function signPayload(tier: string, expiry: string, fingerprintHash: string): str
  * @param fingerprintHash - 16-char hex machine fingerprint
  * @returns License key string: KF-{TIER}-{YYYYMMDD}-{FPHASH}-{SIGNATURE}
  */
+/**
+ * Generate an unban token for a banned KnowFlow instance.
+ *
+ * Token: urlsafe_base64(RSA_SIGN("UNBAN:YYYY-MM-DD"))
+ * Valid for 24 hours (KnowFlow checks today + yesterday).
+ */
+export function generateUnbanToken(): string {
+  const today = new Date().toISOString().split("T")[0]
+  const message = `UNBAN:${today}`
+  const sign = createSign("SHA256")
+  sign.update(message)
+  sign.end()
+  const signature = sign.sign(getPrivateKey())
+  return signature
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+}
+
+
 export function generateKnowFlowLicenseKey(
   tier: KnowFlowTier,
   expiryDate: Date,
