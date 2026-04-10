@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import {
   Card,
   CardContent,
@@ -21,6 +22,7 @@ import {
   ChevronRight,
   Loader2,
 } from "lucide-react"
+import { maskKey } from "@/lib/license/display"
 
 interface LicenseOption {
   id: string
@@ -41,6 +43,7 @@ interface ActivationEntry {
 type Step = 1 | 2 | 3
 
 export default function ActivatePage() {
+  const t = useTranslations("portal")
   const [currentStep, setCurrentStep] = useState<Step>(1)
   const [selectedLicense, setSelectedLicense] = useState("")
   const [requestCode, setRequestCode] = useState("")
@@ -99,7 +102,7 @@ export default function ActivatePage() {
       })
       const json = await res.json()
       if (!res.ok) {
-        setError(json.error ?? "Activation failed")
+        setError(json.error ?? t("activationFailed"))
         return
       }
       setActivationCode(json.data.activationCode)
@@ -112,11 +115,11 @@ export default function ActivatePage() {
         setActivationsData(actJson.data ?? [])
       }
     } catch {
-      setError("Network error. Please try again.")
+      setError(t("activationNetworkError"))
     } finally {
       setLoading(false)
     }
-  }, [selectedLicense, requestCode])
+  }, [selectedLicense, requestCode, t])
 
   const handleRevoke = useCallback(async (activationId: string) => {
     try {
@@ -151,11 +154,6 @@ export default function ActivatePage() {
     setError("")
   }, [])
 
-  const maskKey = (key: string): string => {
-    if (key.length <= 8) return key
-    return key.slice(0, 3) + "-XXXX-" + key.slice(-4)
-  }
-
   const stepClasses = (step: Step) =>
     step === currentStep
       ? "border-primary bg-primary/5"
@@ -168,11 +166,9 @@ export default function ActivatePage() {
       {/* Page header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
-          License Activation
+          {t("licenseActivation")}
         </h1>
-        <p className="text-muted-foreground">
-          Activate your KnowFlow AI license on a new machine.
-        </p>
+        <p className="text-muted-foreground">{t("licenseActivationDesc")}</p>
       </div>
 
       {/* Step indicators */}
@@ -189,9 +185,9 @@ export default function ActivatePage() {
               {step}
             </div>
             <span className="hidden text-sm sm:inline">
-              {step === 1 && "Select License"}
-              {step === 2 && "Request Code"}
-              {step === 3 && "Activation Code"}
+              {step === 1 && t("step1Label")}
+              {step === 2 && t("step2Label")}
+              {step === 3 && t("step3Label")}
             </span>
             {step < 3 && (
               <ChevronRight className="size-4 text-muted-foreground" />
@@ -205,12 +201,8 @@ export default function ActivatePage() {
         {/* Step 1: Select license */}
         <Card className={stepClasses(1)}>
           <CardHeader>
-            <CardTitle className="text-base">
-              Step 1: Select a License
-            </CardTitle>
-            <CardDescription>
-              Choose which license you want to activate on a new machine.
-            </CardDescription>
+            <CardTitle className="text-base">{t("step1Title")}</CardTitle>
+            <CardDescription>{t("step1Desc")}</CardDescription>
           </CardHeader>
           {currentStep >= 1 && (
             <CardContent className="grid gap-2">
@@ -221,7 +213,7 @@ export default function ActivatePage() {
                 </div>
               ) : licenses.length === 0 ? (
                 <p className="text-sm text-muted-foreground py-4 text-center">
-                  No active licenses found. Purchase a license first.
+                  {t("noActiveLicenses")}
                 </p>
               ) : (
                 licenses.map((license) => (
@@ -261,21 +253,16 @@ export default function ActivatePage() {
         {/* Step 2: Paste request code */}
         <Card className={stepClasses(2)}>
           <CardHeader>
-            <CardTitle className="text-base">
-              Step 2: Paste Activation Request
-            </CardTitle>
-            <CardDescription>
-              Run the KnowFlow CLI on your target machine and paste the
-              generated request code below.
-            </CardDescription>
+            <CardTitle className="text-base">{t("step2Title")}</CardTitle>
+            <CardDescription>{t("step2Desc")}</CardDescription>
           </CardHeader>
           {currentStep >= 2 && (
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="request-code">Request Code</Label>
+                <Label htmlFor="request-code">{t("requestCode")}</Label>
                 <Textarea
                   id="request-code"
-                  placeholder="Paste your activation request code here..."
+                  placeholder={t("requestCodePlaceholder")}
                   value={requestCode}
                   onChange={(e) => setRequestCode(e.target.value)}
                   className="font-mono text-xs"
@@ -290,7 +277,7 @@ export default function ActivatePage() {
                 disabled={!requestCode.trim() || loading}
               >
                 {loading && <Loader2 className="size-4 animate-spin mr-1.5" />}
-                Generate Activation Code
+                {t("generateActivation")}
               </Button>
             </CardContent>
           )}
@@ -299,13 +286,8 @@ export default function ActivatePage() {
         {/* Step 3: Activation code */}
         <Card className={stepClasses(3)}>
           <CardHeader>
-            <CardTitle className="text-base">
-              Step 3: Copy Activation Code
-            </CardTitle>
-            <CardDescription>
-              Copy this code and paste it into the KnowFlow CLI to complete
-              activation.
-            </CardDescription>
+            <CardTitle className="text-base">{t("step3Title")}</CardTitle>
+            <CardDescription>{t("step3Desc")}</CardDescription>
           </CardHeader>
           {currentStep >= 3 && activationCode && (
             <CardContent className="space-y-4">
@@ -328,7 +310,7 @@ export default function ActivatePage() {
                 </Button>
               </div>
               <Button variant="outline" onClick={handleReset}>
-                Activate Another Machine
+                {t("activateAnother")}
               </Button>
             </CardContent>
           )}
@@ -337,7 +319,7 @@ export default function ActivatePage() {
 
       {/* Current activations */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Current Activations</h2>
+        <h2 className="text-lg font-semibold">{t("currentActivations")}</h2>
         {loadingData ? (
           <div className="grid gap-3">
             <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
@@ -347,7 +329,7 @@ export default function ActivatePage() {
           <Card>
             <CardContent className="py-8 text-center">
               <p className="text-sm text-muted-foreground">
-                No activations yet.
+                {t("noActivations")}
               </p>
             </CardContent>
           </Card>
@@ -368,7 +350,7 @@ export default function ActivatePage() {
                       <Badge variant="secondary" className="text-[10px]">
                         {activation.licenseTier}
                       </Badge>{" "}
-                      &middot; Activated{" "}
+                      &middot; {t("activatedOn")}{" "}
                       {activation.activatedAt
                         ? new Date(activation.activatedAt).toLocaleDateString()
                         : "—"}

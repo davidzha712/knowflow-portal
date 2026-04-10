@@ -3,6 +3,7 @@ import {
   generateKeyPairSync,
   randomBytes,
 } from "node:crypto";
+import { getPrivateKey } from "./keys";
 
 type Tier = "free" | "pro" | "enterprise";
 
@@ -23,18 +24,6 @@ export function generateKeyPair() {
     privateKeyEncoding: { type: "pkcs8", format: "pem" },
   });
   return { publicKey, privateKey };
-}
-
-// ---------------------------------------------------------------------------
-// Private key accessor
-// ---------------------------------------------------------------------------
-function getPrivateKey(): string {
-  const key = process.env.KNOWFLOW_RSA_PRIVATE_KEY;
-  if (!key) {
-    throw new Error("KNOWFLOW_RSA_PRIVATE_KEY is not configured");
-  }
-  // Env vars often store newlines as literal \n
-  return key.replace(/\\n/g, "\n");
 }
 
 // ---------------------------------------------------------------------------

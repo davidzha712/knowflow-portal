@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useUser } from "@clerk/nextjs"
+import { useTranslations } from "next-intl"
 import {
   Card,
   CardContent,
@@ -17,6 +18,7 @@ import { ExternalLink, Loader2, Check } from "lucide-react"
 
 export default function SettingsPage() {
   const { user, isLoaded } = useUser()
+  const t = useTranslations("portal")
   const [company, setCompany] = useState("")
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -50,72 +52,64 @@ export default function SettingsPage() {
     <div className="space-y-8">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your account and organization preferences.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t("settingsTitle")}
+        </h1>
+        <p className="text-muted-foreground">{t("settingsDesc")}</p>
       </div>
 
       {/* Profile settings */}
       <Card>
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
-          <CardDescription>
-            Your personal information. Email and authentication are managed
-            through Clerk.
-          </CardDescription>
+          <CardTitle>{t("profile")}</CardTitle>
+          <CardDescription>{t("profileDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>First Name</Label>
+              <Label>{t("firstName")}</Label>
               <Input
                 value={user?.firstName ?? ""}
                 disabled
-                aria-label="First name"
+                aria-label={t("firstName")}
               />
             </div>
             <div className="space-y-2">
-              <Label>Last Name</Label>
+              <Label>{t("lastName")}</Label>
               <Input
                 value={user?.lastName ?? ""}
                 disabled
-                aria-label="Last name"
+                aria-label={t("lastName")}
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Email</Label>
+            <Label>{t("emailLabel")}</Label>
             <Input
               value={user?.primaryEmailAddress?.emailAddress ?? ""}
               disabled
-              aria-label="Email address"
+              aria-label={t("emailLabel")}
             />
           </div>
-          <p className="text-xs text-muted-foreground">
-            Profile information is managed through your Clerk account. Click the
-            avatar in the sidebar to update your profile.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("profileNote")}</p>
         </CardContent>
       </Card>
 
       {/* Company info */}
       <Card>
         <CardHeader>
-          <CardTitle>Company Information</CardTitle>
-          <CardDescription>
-            Organization details for license invoicing and certificates.
-          </CardDescription>
+          <CardTitle>{t("companyInfo")}</CardTitle>
+          <CardDescription>{t("companyInfoDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="company-name">Company Name</Label>
+            <Label htmlFor="company-name">{t("companyName")}</Label>
             <Input
               id="company-name"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
-              placeholder="Acme Corp"
-              aria-label="Company name"
+              placeholder={t("companyPlaceholder")}
+              aria-label={t("companyName")}
             />
           </div>
           <Button onClick={handleSaveCompany} disabled={saving}>
@@ -124,7 +118,7 @@ export default function SettingsPage() {
             ) : saved ? (
               <Check className="size-4 mr-1.5" />
             ) : null}
-            {saved ? "Saved" : "Save Company Info"}
+            {saved ? t("saved") : t("saveCompany")}
           </Button>
         </CardContent>
       </Card>
@@ -134,15 +128,13 @@ export default function SettingsPage() {
       {/* Billing */}
       <Card>
         <CardHeader>
-          <CardTitle>Billing</CardTitle>
-          <CardDescription>
-            View your billing history and manage payment methods.
-          </CardDescription>
+          <CardTitle>{t("billing")}</CardTitle>
+          <CardDescription>{t("billingDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Button variant="outline">
             <ExternalLink className="size-4" />
-            Open Billing Portal
+            {t("openBilling")}
           </Button>
         </CardContent>
       </Card>

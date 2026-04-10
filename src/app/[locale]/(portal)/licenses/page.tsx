@@ -15,26 +15,11 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { db } from "@/lib/db"
 import { customers } from "@/lib/db/schema"
-
-function statusBadgeVariant(status: string, expiresAt: Date | null) {
-  if (expiresAt && expiresAt < new Date()) return "outline" as const
-  const thirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-  if (expiresAt && expiresAt < thirtyDays) return "destructive" as const
-  if (status === "active") return "secondary" as const
-  return "outline" as const
-}
-
-function getDisplayStatus(status: string, expiresAt: Date | null): string {
-  if (expiresAt && expiresAt < new Date()) return "expired"
-  const thirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-  if (expiresAt && expiresAt < thirtyDays) return "expiring"
-  return status ?? "active"
-}
-
-function maskKey(key: string): string {
-  if (key.length <= 8) return key
-  return key.slice(0, 3) + "-XXXX-XXXX-" + key.slice(-4)
-}
+import {
+  statusBadgeVariant,
+  getDisplayStatus,
+  maskKey,
+} from "@/lib/license/display"
 
 export default async function LicensesPage() {
   const user = await currentUser()
