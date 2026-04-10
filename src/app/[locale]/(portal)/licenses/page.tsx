@@ -20,6 +20,7 @@ import {
   getDisplayStatus,
   maskKey,
 } from "@/lib/license/display"
+import { PurchaseButton } from "@/components/portal/purchase-button"
 
 export default async function LicensesPage() {
   const user = await currentUser()
@@ -41,7 +42,7 @@ export default async function LicensesPage() {
           <h1 className="text-2xl font-bold tracking-tight">{t("myLicenses")}</h1>
           <p className="text-muted-foreground">{t("myLicensesDesc")}</p>
         </div>
-        <Button>{t("purchaseLicense")}</Button>
+        <PurchaseButton tier="pro">{t("purchaseLicense")}</PurchaseButton>
       </div>
 
       {userLicenses.length === 0 ? (
@@ -51,7 +52,9 @@ export default async function LicensesPage() {
               <PackageOpen className="size-8 text-muted-foreground" />
             </div>
             <h3 className="mt-4 text-lg font-semibold">{t("noLicenses")}</h3>
-            <Button className="mt-6">{t("purchaseLicense")}</Button>
+            <div className="mt-6">
+              <PurchaseButton tier="pro">{t("purchaseLicense")}</PurchaseButton>
+            </div>
           </CardContent>
         </Card>
       ) : (

@@ -1,6 +1,10 @@
 import { and, eq, isNull } from "drizzle-orm";
 import type { Database } from "@/lib/db";
-import { activations, licenses } from "@/lib/db/schema";
+import {
+  activations,
+  licenses,
+  type NewActivation,
+} from "@/lib/db/schema";
 import {
   generateActivationCode,
   parseActivationRequest,
@@ -66,13 +70,14 @@ export async function activateLicense(
     machineFingerprint,
   );
 
+  const newActivation: NewActivation = {
+    licenseId,
+    machineFingerprint,
+    activationCode,
+  };
   const [inserted] = await db
     .insert(activations)
-    .values({
-      licenseId,
-      machineFingerprint,
-      activationCode,
-    })
+    .values(newActivation)
     .returning();
 
   return {

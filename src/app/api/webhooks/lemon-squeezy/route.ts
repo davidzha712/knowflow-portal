@@ -2,8 +2,13 @@ import { NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { customers, licenses } from "@/lib/db/schema";
-import { generateLicenseKey } from "@/lib/license/rsa";
+import {
+  customers,
+  licenses,
+  type NewCustomer,
+  type NewLicense,
+} from "@/lib/db/schema";
+import { generateLicenseKey, signLicense } from "@/lib/license/rsa";
 
 // ---------------------------------------------------------------------------
 // Tier mapping: Lemon Squeezy variant ID -> license tier
@@ -72,9 +77,9 @@ function verifyWebhookSignature(
 export async function POST(request: Request) {
   try {
     const rawBody = await request.text();
-    const signature = request.headers.get("x-signature") ?? "";
+    const webhookSignature = request.headers.get("x-signature") ?? "";
 
-    if (!verifyWebhookSignature(rawBody, signature)) {
+    if (!verifyWebhookSignature(rawBody, webhookSignature)) {
       return NextResponse.json(
         { error: "Invalid signature" },
         { status: 401 },
@@ -124,13 +129,14 @@ export async function POST(request: Request) {
     });
 
     if (!customer) {
+      const newCustomer: NewCustomer = {
+        clerkId,
+        email: customerEmail,
+        name: customerName ?? null,
+      };
       const [created] = await db
         .insert(customers)
-        .values({
-          clerkId,
-          email: customerEmail,
-          name: customerName ?? null,
-        })
+        .values(newCustomer)
         .returning();
       customer = created;
     }
@@ -138,15 +144,23 @@ export async function POST(request: Request) {
     // Create license
     const expiresAt = expiryForTier(tier);
     const licenseKey = generateLicenseKey(customer.id, tier, expiresAt);
+    const licenseSignature = signLicense({
+      customerId: customer.id,
+      tier,
+      licenseKey,
+      expiresAt: expiresAt.toISOString(),
+    });
 
-    await db.insert(licenses).values({
+    const newLicense: NewLicense = {
       customerId: customer.id,
       tier,
       licenseKey,
       maxActivations: maxActivationsForTier(tier),
       expiresAt,
       lemonSqueezyOrderId: orderId,
-    });
+      signature: licenseSignature,
+    };
+    await db.insert(licenses).values(newLicense);
 
     return NextResponse.json({ received: true });
   } catch (error) {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useUser } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import {
@@ -22,6 +22,27 @@ export default function SettingsPage() {
   const [company, setCompany] = useState("")
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+
+  // Load existing company from the customer record.
+  useEffect(() => {
+    let cancelled = false
+    const loadCustomer = async () => {
+      try {
+        const res = await fetch("/api/customer")
+        if (!res.ok) return
+        const json = await res.json()
+        if (!cancelled && json.success && typeof json.data?.company === "string") {
+          setCompany(json.data.company)
+        }
+      } catch {
+        // non-critical — leave field empty
+      }
+    }
+    loadCustomer()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const handleSaveCompany = async () => {
     setSaving(true)

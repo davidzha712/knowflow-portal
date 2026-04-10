@@ -39,6 +39,9 @@ export const licenses = pgTable("licenses", {
   maxActivations: integer("max_activations").default(1),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   lemonSqueezyOrderId: text("lemon_squeezy_order_id").unique(),
+  // Detached RSA signature over license payload. Portal only signs; verification
+  // happens in the KnowFlow AI client at activation time.
+  signature: text("signature"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
@@ -72,8 +75,13 @@ export const activationsRelations = relations(activations, ({ one }) => ({
 }));
 
 // ---------------------------------------------------------------------------
-// Type helpers
+// Type helpers — Select (read) + Insert (write) for each table.
 // ---------------------------------------------------------------------------
 export type Customer = typeof customers.$inferSelect;
+export type NewCustomer = typeof customers.$inferInsert;
+
 export type License = typeof licenses.$inferSelect;
+export type NewLicense = typeof licenses.$inferInsert;
+
 export type Activation = typeof activations.$inferSelect;
+export type NewActivation = typeof activations.$inferInsert;

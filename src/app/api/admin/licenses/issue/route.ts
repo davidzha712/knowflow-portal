@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { requireAdmin } from "@/lib/auth/admin"
 import { db } from "@/lib/db"
-import { licenses } from "@/lib/db/schema"
+import { licenses, type NewLicense } from "@/lib/db/schema"
 import { generateLicenseKey, signLicense } from "@/lib/license/rsa"
 import {
   decodeActivationRequest,
@@ -51,17 +51,16 @@ export async function POST(request: Request) {
       expiresAt: expiresAt.toISOString(),
     })
 
-    // Store in database
-    const [created] = await db
-      .insert(licenses)
-      .values({
-        customerId: parsed.customerId,
-        tier: parsed.tier,
-        licenseKey: portalLicenseKey,
-        maxActivations: parsed.maxActivations,
-        expiresAt,
-      })
-      .returning()
+    // Store in database (signature persisted alongside the license)
+    const newLicense: NewLicense = {
+      customerId: parsed.customerId,
+      tier: parsed.tier,
+      licenseKey: portalLicenseKey,
+      maxActivations: parsed.maxActivations,
+      expiresAt,
+      signature,
+    }
+    const [created] = await db.insert(licenses).values(newLicense).returning()
 
     // If activation request provided, generate KnowFlow-AI format key
     let knowflowLicenseKey: string | null = null
@@ -75,7 +74,7 @@ export async function POST(request: Request) {
         return NextResponse.json(
           {
             success: true,
-            data: { ...created, signature },
+            data: created,
             knowflowLicenseKey: null,
             knowflowKeyError: err instanceof Error ? err.message : "Failed to generate",
           },
@@ -87,7 +86,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: true,
-        data: { ...created, signature },
+        data: created,
         knowflowLicenseKey,
       },
       { status: 201 },
