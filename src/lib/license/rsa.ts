@@ -1,13 +1,12 @@
 import {
   createSign,
-  createVerify,
   generateKeyPairSync,
   randomBytes,
 } from "node:crypto";
 
 type Tier = "free" | "pro" | "enterprise";
 
-export interface LicenseData {
+interface LicenseData {
   customerId: string;
   tier: Tier;
   licenseKey: string;
@@ -38,14 +37,6 @@ function getPrivateKey(): string {
   return key.replace(/\\n/g, "\n");
 }
 
-function getPublicKey(): string {
-  const key = process.env.KNOWFLOW_RSA_PUBLIC_KEY;
-  if (!key) {
-    throw new Error("KNOWFLOW_RSA_PUBLIC_KEY is not configured");
-  }
-  return key.replace(/\\n/g, "\n");
-}
-
 // ---------------------------------------------------------------------------
 // License key generation
 // ---------------------------------------------------------------------------
@@ -69,17 +60,6 @@ export function signLicense(data: LicenseData): string {
   return sign.sign(getPrivateKey(), "base64");
 }
 
-export function verifyLicense(data: LicenseData, signature: string): boolean {
-  try {
-    const verify = createVerify("SHA256");
-    verify.update(JSON.stringify(data));
-    verify.end();
-    return verify.verify(getPublicKey(), signature, "base64");
-  } catch {
-    return false;
-  }
-}
-
 // ---------------------------------------------------------------------------
 // Machine-bound activation codes
 // ---------------------------------------------------------------------------
@@ -101,7 +81,7 @@ export function generateActivationCode(
 // ---------------------------------------------------------------------------
 // Activation request parsing
 // ---------------------------------------------------------------------------
-export interface ActivationRequest {
+interface ActivationRequest {
   machineFingerprint: string;
   licenseKey?: string;
 }

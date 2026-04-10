@@ -101,15 +101,3 @@ export async function revokeActivation(db: Database, activationId: string) {
   return updated;
 }
 
-// ---------------------------------------------------------------------------
-// List active activations for a license
-// ---------------------------------------------------------------------------
-export async function getActivations(db: Database, licenseId: string) {
-  return db.query.activations.findMany({
-    where: and(
-      eq(activations.licenseId, licenseId),
-      isNull(activations.revokedAt),
-    ),
-    orderBy: (a, { desc }) => [desc(a.activatedAt)],
-  });
-}

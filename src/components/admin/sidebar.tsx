@@ -24,7 +24,6 @@ const navKeys = [
 export function AdminSidebar() {
   const pathname = usePathname()
   const t = useTranslations("admin")
-  const tp = useTranslations("portal")
 
   return (
     <aside className="flex w-64 flex-col border-r border-border bg-card">

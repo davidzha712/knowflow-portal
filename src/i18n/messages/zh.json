@@ -131,11 +131,6 @@
     "terms": "服务条款",
     "copyright": "保留所有权利。"
   },
-  "theme": {
-    "light": "浅色",
-    "dark": "深色",
-    "system": "跟随系统"
-  },
   "portal": {
     "dashboard": "控制台",
     "licenses": "许可证",
@@ -157,34 +152,7 @@
     "expires": "到期日期",
     "activations": "激活数",
     "activationUsage": "激活使用量",
-    "certificate": "证书",
-    "licenseActivation": "许可证激活",
-    "licenseActivationDesc": "在新机器上激活您的 KnowFlow AI 许可证。",
-    "step1": "选择许可证",
-    "step1Desc": "选择要在新机器上激活的许可证。",
-    "step2": "请求码",
-    "step2Desc": "在目标机器上运行 KnowFlow CLI，并粘贴生成的请求码。",
-    "step3": "激活码",
-    "step3Desc": "复制此代码并粘贴到 KnowFlow CLI 中完成激活。",
-    "requestCode": "请求码",
-    "requestCodePlaceholder": "在此粘贴激活请求码...",
-    "generateActivation": "生成激活码",
-    "activateAnother": "激活另一台机器",
-    "currentActivations": "当前激活",
-    "noActivations": "暂无激活记录。",
-    "revoke": "撤销",
-    "settingsTitle": "设置",
-    "settingsDesc": "管理您的账户和组织偏好。",
-    "profile": "个人信息",
-    "profileDesc": "您的个人信息由 Clerk 管理。",
-    "companyInfo": "公司信息",
-    "companyInfoDesc": "用于许可证发票和证书的组织信息。",
-    "companyName": "公司名称",
-    "saveCompany": "保存公司信息",
-    "saved": "已保存",
-    "billing": "账单",
-    "billingDesc": "查看账单历史和管理支付方式。",
-    "openBilling": "打开账单门户"
+    "certificate": "证书"
   },
   "admin": {
     "dashboard": "管理面板",
@@ -217,8 +185,6 @@
     "activationRequest": "激活请求码",
     "activationRequestOptional": "可选",
     "activationRequestHint": "如果提供，将生成绑定机器的 KnowFlow 许可证密钥。",
-    "result": "结果",
-    "resultDesc": "生成的许可证密钥将在此显示。",
     "resultPlaceholder": "填写表单并点击「签发许可证」生成密钥。",
     "portalKey": "门户许可证密钥",
     "dbTracking": "数据库追踪",
@@ -227,7 +193,6 @@
     "sendToCustomer": "将此密钥发送给客户。",
     "noRequestProvided": "未提供激活请求码。客户需要先从 KnowFlow 管理面板生成请求码。",
     "backToPortal": "返回门户",
-    "refresh": "刷新",
     "cancel": "取消",
     "create": "创建"
   }

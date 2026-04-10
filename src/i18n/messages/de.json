@@ -131,11 +131,6 @@
     "terms": "Nutzungsbedingungen",
     "copyright": "Alle Rechte vorbehalten."
   },
-  "theme": {
-    "light": "Hell",
-    "dark": "Dunkel",
-    "system": "System"
-  },
   "portal": {
     "dashboard": "Dashboard",
     "licenses": "Lizenzen",
@@ -157,34 +152,7 @@
     "expires": "Läuft ab",
     "activations": "Aktivierungen",
     "activationUsage": "Aktivierungsverbrauch",
-    "certificate": "Zertifikat",
-    "licenseActivation": "Lizenzaktivierung",
-    "licenseActivationDesc": "Aktivieren Sie Ihre KnowFlow AI-Lizenz auf einem neuen Rechner.",
-    "step1": "Lizenz wählen",
-    "step1Desc": "Wählen Sie die Lizenz für die Aktivierung.",
-    "step2": "Anfragecode",
-    "step2Desc": "Führen Sie die KnowFlow CLI auf dem Zielrechner aus und fügen Sie den Code ein.",
-    "step3": "Aktivierungscode",
-    "step3Desc": "Kopieren Sie diesen Code in die KnowFlow CLI.",
-    "requestCode": "Anfragecode",
-    "requestCodePlaceholder": "Aktivierungsanfrage hier einfügen...",
-    "generateActivation": "Aktivierungscode generieren",
-    "activateAnother": "Weiteren Rechner aktivieren",
-    "currentActivations": "Aktuelle Aktivierungen",
-    "noActivations": "Noch keine Aktivierungen.",
-    "revoke": "Widerrufen",
-    "settingsTitle": "Einstellungen",
-    "settingsDesc": "Konto- und Organisationseinstellungen verwalten.",
-    "profile": "Profil",
-    "profileDesc": "Ihre persönlichen Daten werden über Clerk verwaltet.",
-    "companyInfo": "Unternehmensinformationen",
-    "companyInfoDesc": "Organisationsdaten für Lizenzrechnungen und Zertifikate.",
-    "companyName": "Firmenname",
-    "saveCompany": "Firmendaten speichern",
-    "saved": "Gespeichert",
-    "billing": "Abrechnung",
-    "billingDesc": "Rechnungshistorie und Zahlungsmethoden verwalten.",
-    "openBilling": "Abrechnungsportal öffnen"
+    "certificate": "Zertifikat"
   },
   "admin": {
     "dashboard": "Admin-Dashboard",
@@ -217,8 +185,6 @@
     "activationRequest": "Aktivierungsanfrage",
     "activationRequestOptional": "optional",
     "activationRequestHint": "Generiert einen maschinengebundenen KnowFlow-Lizenzschlüssel.",
-    "result": "Ergebnis",
-    "resultDesc": "Generierte Lizenzschlüssel erscheinen hier.",
     "resultPlaceholder": "Formular ausfuellen und auf Lizenz ausstellen klicken.",
     "portalKey": "Portal-Lizenzschlüssel",
     "dbTracking": "DB-Tracking",
@@ -227,7 +193,6 @@
     "sendToCustomer": "Diesen Schlüssel an den Kunden senden.",
     "noRequestProvided": "Keine Aktivierungsanfrage bereitgestellt.",
     "backToPortal": "Zurück zum Portal",
-    "refresh": "Aktualisieren",
     "cancel": "Abbrechen",
     "create": "Erstellen"
   }

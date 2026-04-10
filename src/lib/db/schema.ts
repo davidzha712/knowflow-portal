@@ -75,10 +75,5 @@ export const activationsRelations = relations(activations, ({ one }) => ({
 // Type helpers
 // ---------------------------------------------------------------------------
 export type Customer = typeof customers.$inferSelect;
-export type NewCustomer = typeof customers.$inferInsert;
-
 export type License = typeof licenses.$inferSelect;
-export type NewLicense = typeof licenses.$inferInsert;
-
 export type Activation = typeof activations.$inferSelect;
-export type NewActivation = typeof activations.$inferInsert;

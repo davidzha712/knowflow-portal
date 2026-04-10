@@ -3,7 +3,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { customers, licenses } from "@/lib/db/schema";
-import { generateLicenseKey, signLicense } from "@/lib/license/rsa";
+import { generateLicenseKey } from "@/lib/license/rsa";
 
 // ---------------------------------------------------------------------------
 // Tier mapping: Lemon Squeezy variant ID -> license tier
@@ -138,13 +138,6 @@ export async function POST(request: Request) {
     // Create license
     const expiresAt = expiryForTier(tier);
     const licenseKey = generateLicenseKey(customer.id, tier, expiresAt);
-
-    signLicense({
-      customerId: customer.id,
-      tier,
-      licenseKey,
-      expiresAt: expiresAt.toISOString(),
-    });
 
     await db.insert(licenses).values({
       customerId: customer.id,

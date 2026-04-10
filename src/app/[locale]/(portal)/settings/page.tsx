@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useUser } from "@clerk/nextjs"
 import {
   Card,
@@ -20,22 +20,6 @@ export default function SettingsPage() {
   const [company, setCompany] = useState("")
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
-
-  // Load company info from customer record
-  useEffect(() => {
-    const loadCompany = async () => {
-      try {
-        const res = await fetch("/api/licenses")
-        if (res.ok) {
-          // The customer info comes from the same auth context
-          // Company is stored on the customer record
-        }
-      } catch {
-        // non-critical
-      }
-    }
-    loadCompany()
-  }, [])
 
   const handleSaveCompany = async () => {
     setSaving(true)

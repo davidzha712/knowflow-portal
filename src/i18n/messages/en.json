@@ -131,11 +131,6 @@
     "terms": "Terms of Service",
     "copyright": "All rights reserved."
   },
-  "theme": {
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System"
-  },
   "portal": {
     "dashboard": "Dashboard",
     "licenses": "Licenses",
@@ -157,34 +152,7 @@
     "expires": "Expires",
     "activations": "Activations",
     "activationUsage": "Activation usage",
-    "certificate": "Certificate",
-    "licenseActivation": "License Activation",
-    "licenseActivationDesc": "Activate your KnowFlow AI license on a new machine.",
-    "step1": "Select License",
-    "step1Desc": "Choose which license you want to activate on a new machine.",
-    "step2": "Request Code",
-    "step2Desc": "Run the KnowFlow CLI on your target machine and paste the generated request code below.",
-    "step3": "Activation Code",
-    "step3Desc": "Copy this code and paste it into the KnowFlow CLI to complete activation.",
-    "requestCode": "Request Code",
-    "requestCodePlaceholder": "Paste your activation request code here...",
-    "generateActivation": "Generate Activation Code",
-    "activateAnother": "Activate Another Machine",
-    "currentActivations": "Current Activations",
-    "noActivations": "No activations yet.",
-    "revoke": "Revoke",
-    "settingsTitle": "Settings",
-    "settingsDesc": "Manage your account and organization preferences.",
-    "profile": "Profile",
-    "profileDesc": "Your personal information managed through Clerk.",
-    "companyInfo": "Company Information",
-    "companyInfoDesc": "Organization details for license invoicing and certificates.",
-    "companyName": "Company Name",
-    "saveCompany": "Save Company Info",
-    "saved": "Saved",
-    "billing": "Billing",
-    "billingDesc": "View your billing history and manage payment methods.",
-    "openBilling": "Open Billing Portal"
+    "certificate": "Certificate"
   },
   "admin": {
     "dashboard": "Admin Dashboard",
@@ -217,8 +185,6 @@
     "activationRequest": "Activation Request Code",
     "activationRequestOptional": "optional",
     "activationRequestHint": "If provided, generates a machine-bound KnowFlow license key.",
-    "result": "Result",
-    "resultDesc": "Generated license keys will appear here.",
     "resultPlaceholder": "Fill in the form and click \"Issue License\" to generate keys.",
     "portalKey": "Portal License Key",
     "dbTracking": "DB tracking",
@@ -227,7 +193,6 @@
     "sendToCustomer": "Send this key to the customer.",
     "noRequestProvided": "No activation request provided. The customer needs to generate one from their KnowFlow admin panel first.",
     "backToPortal": "Back to Portal",
-    "refresh": "Refresh",
     "cancel": "Cancel",
     "create": "Create"
   }
