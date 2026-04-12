@@ -9,50 +9,53 @@
     "signIn": "Anmelden"
   },
   "hero": {
-    "badge": "Enterprise-Grade RAG Engine",
-    "title": "Intelligentes Wissensmanagement für Unternehmen",
-    "subtitle": "KnowFlow AI bietet produktionsreife Retrieval-Augmented Generation mit tiefem Dokumentenverständnis, Multi-Model-Orchestrierung und Unternehmenssicherheit.",
-    "cta": "Kostenlos testen",
-    "ctaSecondary": "Demo buchen",
-    "poweredBy": "Basierend auf RAGFlow — der beliebtesten Open-Source RAG Engine",
-    "stats": {
-      "stars": "GitHub Stars",
-      "forks": "Forks",
-      "dockerPulls": "Docker Pulls",
-      "contributors": "Contributors"
-    }
+    "title": "Die Wissens-Engine\nfür Unternehmen",
+    "subtitle": "Entwickelt für Retrieval-Augmented Generation. Konzipiert für Produktionsworkloads in großem Maßstab.",
+    "cta": "Jetzt starten",
+    "ctaSecondary": "Vertrieb kontaktieren"
   },
-  "features": {
-    "title": "Alles für Enterprise RAG",
-    "subtitle": "Eine umfassende Plattform, die Ihre Dokumente in intelligente, abfragbare Wissensdatenbanken verwandelt.",
-    "coreRag": {
-      "title": "Core RAG Engine",
-      "description": "Tiefes Dokumenten-Parsing mit Layout-Erkennung, Tabellenextraktion und intelligentem Chunking für überlegene Retrieval-Genauigkeit."
+  "valueProps": {
+    "deep": {
+      "fig": "FIG 0.2",
+      "title": "Tiefes Verständnis",
+      "description": "Layout-bewusstes Parsing mit Tabellenextraktion, intelligentem Chunking und Unterstützung für 50+ Dokumentformate."
     },
     "enterprise": {
-      "title": "Enterprise Ready",
-      "description": "Rollenbasierte Zugriffskontrolle, Audit-Logging, SSO-Integration und compliance-konforme Bereitstellungsoptionen."
+      "fig": "FIG 0.3",
+      "title": "Enterprise-fähig",
+      "description": "Rollenbasierte Zugriffskontrolle, Audit-Logging, SSO-Integration und Compliance-Bereitstellung ab dem ersten Tag."
     },
-    "ai": {
-      "title": "Multi-Model KI",
-      "description": "Orchestrierung über OpenAI, Anthropic, lokale LLMs und benutzerdefinierte Modelle mit automatischem Failover und Load Balancing."
-    },
-    "dataSources": {
-      "title": "Universelle Datenquellen",
-      "description": "Verbinden Sie PDF, Word, Excel, Webseiten, Datenbanken, APIs und mehr. 50+ Formate sofort einsatzbereit."
-    },
-    "deployment": {
-      "title": "Flexible Bereitstellung",
-      "description": "On-Premise, Private Cloud oder Hybrid. Docker, Kubernetes und Air-Gapped-Umgebungen werden unterstützt."
-    },
-    "commercial": {
-      "title": "Kommerzielle Lizenz",
-      "description": "Vollständige kommerzielle Lizenz mit Prioritäts-Support, SLA-Garantien und dediziertem Customer Success Team."
+    "multiModel": {
+      "fig": "FIG 0.4",
+      "title": "Multi-Model-Orchestrierung",
+      "description": "Routing über OpenAI, Anthropic, lokale LLMs und benutzerdefinierte Modelle mit automatischem Failover und Lastausgleich."
     }
   },
-  "architecture": {
-    "title": "Gebaut für Skalierung",
-    "subtitle": "Eine moderne Architektur für Zuverlässigkeit, Leistung und Erweiterbarkeit."
+  "showcase": {
+    "ingest": {
+      "number": "1.0",
+      "label": "Aufnahme",
+      "title": "Verwandeln Sie jedes\nDokument in Wissen",
+      "description": "Importieren Sie PDFs, Word-Dokumente, Tabellen, Webseiten und Datenbanken. KnowFlow erkennt Layouts, extrahiert Tabellen und erstellt strukturierte Chunks für die Suche."
+    },
+    "retrieve": {
+      "number": "2.0",
+      "label": "Abruf",
+      "title": "Die richtige Antwort\nfinden, nicht nur Schlüsselwörter",
+      "description": "Hybride Suche kombiniert dichte Vektorsuche mit Keyword-Matching und Re-Ranking. Präzise kontextuelle Antworten aus Ihrer Wissensdatenbank."
+    },
+    "orchestrate": {
+      "number": "3.0",
+      "label": "Orchestrierung",
+      "title": "Eine Schnittstelle,\njedes Modell",
+      "description": "Verbinden Sie jedes LLM — Cloud oder lokal. KnowFlow routet Anfragen basierend auf Kosten, Latenz und Fähigkeiten mit automatischem Failover."
+    },
+    "deploy": {
+      "number": "4.0",
+      "label": "Bereitstellung",
+      "title": "Mit Zuversicht in\nProduktion liefern",
+      "description": "On-Premise, Private Cloud oder Hybrid. Docker und Kubernetes nativ. Air-Gapped-Unterstützung. Enterprise SLA mit 99,9% Verfügbarkeit."
+    }
   },
   "pricing": {
     "title": "Einfache, transparente Preise",
@@ -106,6 +109,37 @@
       "cta": "Vertrieb kontaktieren"
     }
   },
+  "social": {
+    "poweredBy": "Basierend auf RAGFlow — der beliebtesten Open-Source RAG Engine",
+    "stats": {
+      "stars": "GitHub Stars",
+      "forks": "Forks",
+      "dockerPulls": "Docker Pulls",
+      "contributors": "Contributors"
+    },
+    "testimonials": [
+      {
+        "quote": "KnowFlow hat die Art und Weise, wie unser Team auf internes Wissen zugreift, transformiert.",
+        "name": "Sarah Chen",
+        "company": "Meridian Health"
+      },
+      {
+        "quote": "Wir haben jede RAG-Plattform evaluiert. KnowFlows Dokumenten-Parsing ist in einer eigenen Liga.",
+        "name": "Marcus Weber",
+        "company": "Tectonic Labs"
+      },
+      {
+        "quote": "Die Bereitstellung war nahtlos. Air-Gapped-Unterstützung war entscheidend für unser Compliance-Team.",
+        "name": "Yuki Tanaka",
+        "company": "NovaBridge"
+      }
+    ]
+  },
+  "cta": {
+    "title": "Für Unternehmen gebaut.\nHeute verfügbar.",
+    "primary": "Jetzt starten",
+    "secondary": "Vertrieb kontaktieren"
+  },
   "contact": {
     "title": "Demo buchen",
     "subtitle": "Erleben Sie KnowFlow AI in Aktion. Unser Team führt Sie durch eine personalisierte Demo.",
@@ -129,7 +163,15 @@
     "careers": "Karriere",
     "privacy": "Datenschutz",
     "terms": "Nutzungsbedingungen",
-    "copyright": "Alle Rechte vorbehalten."
+    "copyright": "Alle Rechte vorbehalten.",
+    "ingest": "Aufnahme",
+    "retrieve": "Abruf",
+    "orchestrate": "Orchestrierung",
+    "deploy": "Bereitstellung",
+    "security": "Sicherheit",
+    "status": "Status",
+    "github": "GitHub",
+    "community": "Community"
   },
   "portal": {
     "dashboard": "Dashboard",

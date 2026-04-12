@@ -9,50 +9,53 @@
     "signIn": "Sign In"
   },
   "hero": {
-    "badge": "Enterprise-Grade RAG Engine",
-    "title": "Intelligent Knowledge Management for Enterprise",
-    "subtitle": "KnowFlow AI delivers production-ready Retrieval-Augmented Generation with deep document understanding, multi-model orchestration, and enterprise security.",
-    "cta": "Start Free Trial",
-    "ctaSecondary": "Book a Demo",
-    "poweredBy": "Built on RAGFlow — the most starred open-source RAG engine",
-    "stats": {
-      "stars": "GitHub Stars",
-      "forks": "Forks",
-      "dockerPulls": "Docker Pulls",
-      "contributors": "Contributors"
-    }
+    "title": "The knowledge engine\nfor enterprise",
+    "subtitle": "Purpose-built for retrieval-augmented generation. Designed for production workloads at scale.",
+    "cta": "Get Started",
+    "ctaSecondary": "Contact Sales"
   },
-  "features": {
-    "title": "Everything You Need for Enterprise RAG",
-    "subtitle": "A comprehensive platform that transforms your documents into intelligent, queryable knowledge bases.",
-    "coreRag": {
-      "title": "Core RAG Engine",
-      "description": "Deep document parsing with layout recognition, table extraction, and intelligent chunking for superior retrieval accuracy."
+  "valueProps": {
+    "deep": {
+      "fig": "FIG 0.2",
+      "title": "Deep understanding",
+      "description": "Layout-aware parsing with table extraction, intelligent chunking, and multi-format support across 50+ document types."
     },
     "enterprise": {
-      "title": "Enterprise Ready",
-      "description": "Role-based access control, audit logging, SSO integration, and compliance-ready deployment options."
+      "fig": "FIG 0.3",
+      "title": "Enterprise ready",
+      "description": "Role-based access, audit logging, SSO integration, and compliance-ready deployment from day one."
     },
-    "ai": {
-      "title": "Multi-Model AI",
-      "description": "Orchestrate across OpenAI, Anthropic, local LLMs, and custom models with automatic fallback and load balancing."
-    },
-    "dataSources": {
-      "title": "Universal Data Sources",
-      "description": "Connect PDF, Word, Excel, web pages, databases, APIs, and more. 50+ format support out of the box."
-    },
-    "deployment": {
-      "title": "Flexible Deployment",
-      "description": "Deploy on-premise, private cloud, or hybrid. Docker, Kubernetes, and air-gapped environment support."
-    },
-    "commercial": {
-      "title": "Commercial License",
-      "description": "Full commercial license with priority support, SLA guarantees, and dedicated customer success team."
+    "multiModel": {
+      "fig": "FIG 0.4",
+      "title": "Multi-model orchestration",
+      "description": "Route across OpenAI, Anthropic, local LLMs, and custom models with automatic failover and load balancing."
     }
   },
-  "architecture": {
-    "title": "Built for Scale",
-    "subtitle": "A modern architecture designed for reliability, performance, and extensibility."
+  "showcase": {
+    "ingest": {
+      "number": "1.0",
+      "label": "Ingest",
+      "title": "Turn any document\ninto knowledge",
+      "description": "Bring in PDFs, Word documents, spreadsheets, web pages, and databases. KnowFlow parses them with layout recognition, extracts tables, and builds structured chunks ready for retrieval."
+    },
+    "retrieve": {
+      "number": "2.0",
+      "label": "Retrieve",
+      "title": "Find the right answer,\nnot just keywords",
+      "description": "Hybrid search combines dense vector retrieval with keyword matching and re-ranking. Get precise, contextual answers from your knowledge base — not just document links."
+    },
+    "orchestrate": {
+      "number": "3.0",
+      "label": "Orchestrate",
+      "title": "One interface,\nevery model",
+      "description": "Connect any LLM — cloud or local. KnowFlow routes queries to the right model based on cost, latency, and capability, with automatic failover across providers."
+    },
+    "deploy": {
+      "number": "4.0",
+      "label": "Deploy",
+      "title": "Ship to production\nwith confidence",
+      "description": "Deploy on-premise, private cloud, or hybrid. Docker and Kubernetes native. Air-gapped environment support. Enterprise SLA with 99.9% uptime guarantee."
+    }
   },
   "pricing": {
     "title": "Simple, Transparent Pricing",
@@ -106,6 +109,37 @@
       "cta": "Contact Sales"
     }
   },
+  "social": {
+    "poweredBy": "Built on RAGFlow — the most starred open-source RAG engine",
+    "stats": {
+      "stars": "GitHub Stars",
+      "forks": "Forks",
+      "dockerPulls": "Docker Pulls",
+      "contributors": "Contributors"
+    },
+    "testimonials": [
+      {
+        "quote": "KnowFlow transformed how our team accesses internal knowledge. Retrieval accuracy is unmatched.",
+        "name": "Sarah Chen",
+        "company": "Meridian Health"
+      },
+      {
+        "quote": "We evaluated every RAG platform on the market. KnowFlow's document parsing is in a league of its own.",
+        "name": "Marcus Weber",
+        "company": "Tectonic Labs"
+      },
+      {
+        "quote": "Deployment was seamless. Air-gapped support was the deciding factor for our compliance team.",
+        "name": "Yuki Tanaka",
+        "company": "NovaBridge"
+      }
+    ]
+  },
+  "cta": {
+    "title": "Built for enterprise.\nAvailable today.",
+    "primary": "Get Started",
+    "secondary": "Contact Sales"
+  },
   "contact": {
     "title": "Book a Demo",
     "subtitle": "See KnowFlow AI in action. Our team will walk you through a personalized demo.",
@@ -129,7 +163,15 @@
     "careers": "Careers",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
-    "copyright": "All rights reserved."
+    "copyright": "All rights reserved.",
+    "ingest": "Ingest",
+    "retrieve": "Retrieve",
+    "orchestrate": "Orchestrate",
+    "deploy": "Deploy",
+    "security": "Security",
+    "status": "Status",
+    "github": "GitHub",
+    "community": "Community"
   },
   "portal": {
     "dashboard": "Dashboard",

@@ -33,16 +33,18 @@ function NodeBox({
 }: ArchNode & { index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: index * 0.08 }}
-      className="flex flex-col items-center gap-2"
+      transition={{ duration: 0.35, delay: index * 0.07 }}
+      className="flex flex-col items-center gap-2.5"
     >
-      <div className="flex size-14 items-center justify-center rounded-xl border border-border bg-card sm:size-16">
-        <Icon className="size-5 text-primary" />
+      <div className="flex size-14 items-center justify-center rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] sm:size-16">
+        <Icon className="size-5 text-[#7170ff]" />
       </div>
-      <span className="text-xs font-medium text-foreground">{label}</span>
+      <span className="text-[12px] font-[510] tracking-normal text-[#d0d6e0]">
+        {label}
+      </span>
     </motion.div>
   )
 }
@@ -53,33 +55,33 @@ function Arrow({ index }: { index: number }) {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.3, delay: index * 0.08 + 0.04 }}
+      transition={{ duration: 0.25, delay: index * 0.07 + 0.04 }}
       className="flex items-center"
     >
       {/* Horizontal on desktop */}
       <svg
-        className="hidden h-4 w-8 text-muted-foreground sm:block"
+        className="hidden h-4 w-8 text-[#62666d] sm:block"
         viewBox="0 0 32 16"
         fill="none"
       >
         <path
           d="M0 8h28m0 0l-4-4m4 4l-4 4"
           stroke="currentColor"
-          strokeWidth="1.5"
+          strokeWidth="1"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
       </svg>
       {/* Vertical on mobile */}
       <svg
-        className="h-8 w-4 text-muted-foreground sm:hidden"
+        className="h-8 w-4 text-[#62666d] sm:hidden"
         viewBox="0 0 16 32"
         fill="none"
       >
         <path
           d="M8 0v28m0 0l-4-4m4 4l4-4"
           stroke="currentColor"
-          strokeWidth="1.5"
+          strokeWidth="1"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -92,20 +94,20 @@ export function Architecture() {
   const t = useTranslations("architecture")
 
   return (
-    <section className="py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="bg-[#08090a] py-24 sm:py-32">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="mx-auto max-w-2xl text-center"
         >
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="text-[32px] font-[510] leading-[1.13] tracking-[-0.704px] text-[#f7f8f8] sm:text-[48px] sm:leading-[1.0] sm:tracking-[-1.056px]">
             {t("title")}
           </h2>
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="mt-4 text-[15px] font-[400] leading-[1.6] tracking-[-0.165px] text-[#8a8f98]">
             {t("subtitle")}
           </p>
         </motion.div>
@@ -124,16 +126,24 @@ export function Architecture() {
         </div>
 
         {/* Bottom note */}
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="mt-12 text-center text-xs text-muted-foreground"
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mt-12 flex items-center justify-center gap-6"
         >
-          Horizontally scalable &middot; Auto-failover &middot; Multi-region
-          ready
-        </motion.p>
+          {["Horizontally scalable", "Auto-failover", "Multi-region ready"].map(
+            (label) => (
+              <span
+                key={label}
+                className="text-[12px] font-[510] tracking-normal text-[#62666d]"
+              >
+                {label}
+              </span>
+            )
+          )}
+        </motion.div>
       </div>
     </section>
   )

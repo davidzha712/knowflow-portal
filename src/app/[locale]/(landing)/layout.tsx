@@ -7,10 +7,10 @@ export default function LandingLayout({
   children: React.ReactNode
 }>) {
   return (
-    <>
+    <div className="dark">
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
-    </>
+    </div>
   )
 }

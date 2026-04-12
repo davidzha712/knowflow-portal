@@ -2,9 +2,7 @@
 
 import { useLocale } from "next-intl"
 import { useCallback, useTransition } from "react"
-import { Globe } from "lucide-react"
 import { useRouter, usePathname } from "@/i18n/navigation"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const locales = ["en", "zh", "de"] as const
@@ -18,7 +16,6 @@ export function LanguageSwitcher() {
 
   const handleSwitch = useCallback(
     (nextLocale: string) => {
-      // Set cookie for next-intl locale detection
       document.cookie = `NEXT_LOCALE=${nextLocale};path=/;max-age=31536000`
       startTransition(() => {
         router.replace(pathname, { locale: nextLocale })
@@ -28,23 +25,21 @@ export function LanguageSwitcher() {
   )
 
   return (
-    <div className="flex items-center gap-0.5 rounded-lg border border-border p-0.5">
-      <Globe className="ml-1.5 size-3.5 text-muted-foreground" />
+    <div className="flex items-center gap-0.5 rounded-md border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-0.5">
       {locales.map((loc) => (
-        <Button
+        <button
           key={loc}
-          variant="ghost"
-          size="sm"
           disabled={isPending}
           onClick={() => handleSwitch(loc)}
           className={cn(
-            "h-6 min-w-[2rem] px-1.5 text-xs font-medium",
-            locale === loc &&
-              "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary",
+            "h-6 min-w-[2rem] rounded px-1.5 text-[11px] font-[510] transition-colors",
+            locale === loc
+              ? "bg-[rgba(255,255,255,0.08)] text-[#f7f8f8]"
+              : "text-[#62666d] hover:text-[#8a8f98]"
           )}
         >
           {localeLabels[loc]}
-        </Button>
+        </button>
       ))}
     </div>
   )

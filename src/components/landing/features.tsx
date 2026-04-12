@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl"
 import { motion } from "framer-motion"
 import { Database, Shield, Brain, Globe, Server, Award } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
 
 const features: Array<{ icon: LucideIcon; key: string }> = [
   { icon: Database, key: "coreRag" },
@@ -28,22 +27,21 @@ function FeatureCard({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.4, delay: index * 0.08 }}
+      transition={{ duration: 0.4, delay: index * 0.06 }}
+      className="group rounded-lg border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-6 transition-colors hover:bg-[rgba(255,255,255,0.04)]"
     >
-      <Card className="h-full transition-colors hover:border-primary/50">
-        <CardContent className="pt-2">
-          <Icon className="size-5 text-primary" />
-          <h3 className="mt-4 text-sm font-semibold text-foreground">
-            {t(`${featureKey}.title`)}
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            {t(`${featureKey}.description`)}
-          </p>
-        </CardContent>
-      </Card>
+      <div className="flex size-9 items-center justify-center rounded-md border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)]">
+        <Icon className="size-4 text-[#7170ff]" />
+      </div>
+      <h3 className="mt-4 text-[15px] font-[590] tracking-[-0.165px] text-[#f7f8f8]">
+        {t(`${featureKey}.title`)}
+      </h3>
+      <p className="mt-2 text-[14px] font-[400] leading-[1.6] tracking-[-0.182px] text-[#8a8f98]">
+        {t(`${featureKey}.description`)}
+      </p>
     </motion.div>
   )
 }
@@ -52,26 +50,26 @@ export function Features() {
   const t = useTranslations("features")
 
   return (
-    <section id="features" className="py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="features" className="bg-[#08090a] py-24 sm:py-32">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="mx-auto max-w-2xl text-center"
         >
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="text-[32px] font-[510] leading-[1.13] tracking-[-0.704px] text-[#f7f8f8] sm:text-[48px] sm:leading-[1.0] sm:tracking-[-1.056px]">
             {t("title")}
           </h2>
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="mt-4 text-[15px] font-[400] leading-[1.6] tracking-[-0.165px] text-[#8a8f98]">
             {t("subtitle")}
           </p>
         </motion.div>
 
         {/* Feature grid */}
-        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
             <FeatureCard
               key={feature.key}

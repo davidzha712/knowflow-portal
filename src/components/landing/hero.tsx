@@ -2,16 +2,124 @@
 
 import { useTranslations } from "next-intl"
 import { motion } from "framer-motion"
-import { ArrowRight, Star, GitFork, Download, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { ArrowRight } from "lucide-react"
 
-const communityStats = [
-  { key: "stars", value: "77.1k", icon: Star },
-  { key: "forks", value: "8.7k", icon: GitFork },
-  { key: "dockerPulls", value: "1.2M+", icon: Download },
-  { key: "contributors", value: "200+", icon: Users },
-] as const
+/**
+ * Simulated KnowFlow product interface — pure CSS, no images.
+ * Matches Linear's pattern of showing a realistic product mockup in the hero.
+ */
+function ProductMockup() {
+  return (
+    <div className="relative mx-auto mt-16 w-full max-w-[960px] sm:mt-20 lg:mt-24">
+      {/* Outer glow */}
+      <div className="pointer-events-none absolute -inset-px rounded-xl bg-gradient-to-b from-[rgba(255,255,255,0.08)] to-transparent" />
+
+      {/* Main panel */}
+      <div className="overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#0f1011]">
+        {/* Title bar */}
+        <div className="flex items-center gap-2 border-b border-[rgba(255,255,255,0.05)] px-4 py-2.5">
+          <div className="flex gap-1.5">
+            <div className="size-2.5 rounded-full bg-[#ff5f57]" />
+            <div className="size-2.5 rounded-full bg-[#febc2e]" />
+            <div className="size-2.5 rounded-full bg-[#28c840]" />
+          </div>
+          <span className="ml-3 text-[11px] font-[510] text-[#62666d]">
+            KnowFlow — Knowledge Base
+          </span>
+        </div>
+
+        <div className="flex min-h-[340px] sm:min-h-[400px]">
+          {/* Sidebar */}
+          <div className="hidden w-[200px] shrink-0 border-r border-[rgba(255,255,255,0.05)] bg-[#0a0b0c] p-3 sm:block">
+            <div className="mb-4 flex items-center gap-2 px-2">
+              <div className="flex size-5 items-center justify-center rounded bg-[#5e6ad2]">
+                <span className="text-[8px] font-[590] text-white">K</span>
+              </div>
+              <span className="text-[12px] font-[510] text-[#d0d6e0]">Acme Corp</span>
+            </div>
+            {[
+              { label: "Knowledge Bases", active: true },
+              { label: "Documents", active: false },
+              { label: "Chat", active: false },
+              { label: "Analytics", active: false },
+              { label: "Settings", active: false },
+            ].map(({ label, active }) => (
+              <div
+                key={label}
+                className={`mb-0.5 rounded-md px-2 py-1.5 text-[12px] font-[510] ${
+                  active
+                    ? "bg-[rgba(255,255,255,0.06)] text-[#f7f8f8]"
+                    : "text-[#62666d]"
+                }`}
+              >
+                {label}
+              </div>
+            ))}
+          </div>
+
+          {/* Main content area */}
+          <div className="flex-1 p-4 sm:p-5">
+            {/* Header row */}
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <h3 className="text-[14px] font-[590] text-[#f7f8f8]">Product Documentation</h3>
+                <p className="mt-0.5 text-[11px] text-[#62666d]">1,247 documents &middot; Last synced 2m ago</p>
+              </div>
+              <div className="flex gap-2">
+                <div className="rounded-md border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] px-2.5 py-1 text-[11px] font-[510] text-[#8a8f98]">
+                  Filter
+                </div>
+                <div className="rounded-md bg-[#5e6ad2] px-2.5 py-1 text-[11px] font-[510] text-white">
+                  + Upload
+                </div>
+              </div>
+            </div>
+
+            {/* Search bar */}
+            <div className="mb-4 rounded-md border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] px-3 py-2">
+              <span className="text-[13px] text-[#62666d]">Ask anything about your knowledge base...</span>
+            </div>
+
+            {/* Document list */}
+            <div className="space-y-1">
+              {[
+                { name: "API Reference v3.2", type: "PDF", chunks: 342, status: "indexed" },
+                { name: "Security Compliance Guide", type: "DOCX", chunks: 128, status: "indexed" },
+                { name: "Architecture Decision Records", type: "MD", chunks: 67, status: "indexed" },
+                { name: "Q1 Product Roadmap", type: "XLSX", chunks: 45, status: "processing" },
+                { name: "Customer Onboarding Playbook", type: "PDF", chunks: 203, status: "indexed" },
+              ].map(({ name, type, chunks, status }) => (
+                <div
+                  key={name}
+                  className="flex items-center justify-between rounded-md px-3 py-2 transition-colors hover:bg-[rgba(255,255,255,0.02)]"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-7 items-center justify-center rounded border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)]">
+                      <span className="text-[9px] font-[590] text-[#8a8f98]">{type}</span>
+                    </div>
+                    <span className="text-[13px] font-[510] text-[#d0d6e0]">{name}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[11px] text-[#62666d]">{chunks} chunks</span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-[510] ${
+                        status === "indexed"
+                          ? "bg-[rgba(39,166,68,0.12)] text-[#27a644]"
+                          : "bg-[rgba(254,188,46,0.12)] text-[#febc2e]"
+                      }`}
+                    >
+                      {status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export function Hero() {
   const t = useTranslations("hero")
@@ -21,115 +129,70 @@ export function Hero() {
   }
 
   return (
-    <section className="relative min-h-screen bg-background pt-16">
-      {/* Faint grid pattern */}
+    <section className="relative overflow-hidden bg-[#08090a] pt-14">
+      {/* Radial glow */}
       <div
-        className="absolute inset-0 bg-[linear-gradient(var(--color-border)_1px,transparent_1px),linear-gradient(90deg,var(--color-border)_1px,transparent_1px)] bg-[size:64px_64px] opacity-[0.15]"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background to-transparent"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_0%,rgba(94,106,210,0.1),transparent)]"
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto flex max-w-7xl flex-col items-center px-4 pt-24 pb-20 text-center sm:px-6 sm:pt-32 lg:px-8 lg:pt-40">
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Badge variant="secondary" className="mb-6 px-3 py-1 text-xs">
-            {t("badge")}
-          </Badge>
-        </motion.div>
-
-        {/* Headline */}
+      <div className="relative mx-auto max-w-[1200px] px-4 pt-28 pb-20 sm:px-6 sm:pt-36 lg:px-8 lg:pt-44">
+        {/* Headline — centered, gradient text */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="max-w-4xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
+          transition={{ duration: 0.7 }}
+          className="mx-auto max-w-4xl text-center text-[40px] font-[510] leading-[1.0] tracking-[-0.88px] text-[#f7f8f8] sm:text-[56px] sm:tracking-[-1.232px] md:text-[64px] md:tracking-[-1.408px] lg:text-[72px] lg:tracking-[-1.584px]"
+          style={{
+            backgroundImage: "linear-gradient(180deg, #f7f8f8 30%, rgba(247,248,248,0.5) 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            whiteSpace: "pre-line",
+          }}
         >
           {t("title")}
         </motion.h1>
 
         {/* Subtitle */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="mx-auto mt-6 max-w-xl text-center text-[16px] font-[400] leading-[1.6] text-[#8a8f98] sm:text-[18px] sm:tracking-[-0.165px]"
         >
           {t("subtitle")}
         </motion.p>
 
         {/* CTAs */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-10 flex flex-col gap-4 sm:flex-row"
+          transition={{ duration: 0.5, delay: 0.25 }}
+          className="mt-10 flex justify-center gap-3"
         >
-          <Button size="lg" className="gap-2 px-6" onClick={() => scrollTo("pricing")}>
+          <button
+            onClick={() => scrollTo("pricing")}
+            className="inline-flex items-center gap-2 rounded-md bg-[#5e6ad2] px-5 py-2.5 text-[14px] font-[510] text-white transition-colors hover:bg-[#828fff]"
+          >
             {t("cta")}
             <ArrowRight className="size-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            className="px-6"
+          </button>
+          <button
             onClick={() => scrollTo("contact")}
+            className="inline-flex items-center rounded-md border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] px-5 py-2.5 text-[14px] font-[510] text-[#d0d6e0] transition-colors hover:bg-[rgba(255,255,255,0.05)] hover:text-[#f7f8f8]"
           >
             {t("ctaSecondary")}
-          </Button>
+          </button>
         </motion.div>
 
-        {/* Powered by RAGFlow + Community Stats */}
+        {/* Product UI Mockup */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="mt-20 flex flex-col items-center gap-6"
+          transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <svg
-              className="size-5"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
-            </svg>
-            <a
-              href="https://github.com/infiniflow/ragflow"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
-            >
-              {t("poweredBy")}
-            </a>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-8">
-            {communityStats.map(({ key, value, icon: Icon }) => (
-              <div key={key} className="flex flex-col items-center gap-1.5">
-                <div className="flex items-center gap-1.5">
-                  <Icon className="size-4 text-primary" />
-                  <span className="text-2xl font-bold font-mono text-foreground">
-                    {value}
-                  </span>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {t(`stats.${key}`)}
-                </span>
-              </div>
-            ))}
-          </div>
+          <ProductMockup />
         </motion.div>
       </div>
     </section>

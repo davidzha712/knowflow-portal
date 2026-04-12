@@ -9,50 +9,53 @@
     "signIn": "登录"
   },
   "hero": {
-    "badge": "企业级 RAG 引擎",
-    "title": "面向企业的智能知识管理",
-    "subtitle": "KnowFlow AI 提供生产级检索增强生成能力，具备深度文档理解、多模型编排和企业级安全保障。",
-    "cta": "免费试用",
-    "ctaSecondary": "预约演示",
-    "poweredBy": "基于 RAGFlow 构建 — 最受欢迎的开源 RAG 引擎",
-    "stats": {
-      "stars": "GitHub Stars",
-      "forks": "Forks",
-      "dockerPulls": "Docker Pulls",
-      "contributors": "Contributors"
-    }
+    "title": "面向企业的\n知识引擎",
+    "subtitle": "为检索增强生成而生。专为大规模生产工作负载设计。",
+    "cta": "开始使用",
+    "ctaSecondary": "联系销售"
   },
-  "features": {
-    "title": "企业 RAG 所需的一切",
-    "subtitle": "全面的平台，将您的文档转化为智能可查询的知识库。",
-    "coreRag": {
-      "title": "核心 RAG 引擎",
-      "description": "深度文档解析，支持版面识别、表格提取和智能分块，实现卓越的检索精度。"
+  "valueProps": {
+    "deep": {
+      "fig": "FIG 0.2",
+      "title": "深度理解",
+      "description": "具备版面感知的解析能力，支持表格提取、智能分块，覆盖 50+ 文档格式。"
     },
     "enterprise": {
+      "fig": "FIG 0.3",
       "title": "企业就绪",
-      "description": "基于角色的访问控制、审计日志、SSO 集成和符合合规要求的部署选项。"
+      "description": "角色访问控制、审计日志、SSO 集成，从第一天起就满足合规部署要求。"
     },
-    "ai": {
-      "title": "多模型 AI",
-      "description": "编排 OpenAI、Anthropic、本地 LLM 和自定义模型，自动故障转移和负载均衡。"
-    },
-    "dataSources": {
-      "title": "通用数据源",
-      "description": "连接 PDF、Word、Excel、网页、数据库、API 等，开箱支持 50+ 格式。"
-    },
-    "deployment": {
-      "title": "灵活部署",
-      "description": "支持本地部署、私有云或混合部署。Docker、Kubernetes 和离线环境全面支持。"
-    },
-    "commercial": {
-      "title": "商业许可",
-      "description": "完整的商业许可证，包含优先支持、SLA 保证和专属客户成功团队。"
+    "multiModel": {
+      "fig": "FIG 0.4",
+      "title": "多模型编排",
+      "description": "统一调度 OpenAI、Anthropic、本地 LLM 和自定义模型，自动故障转移与负载均衡。"
     }
   },
-  "architecture": {
-    "title": "为规模而生",
-    "subtitle": "现代架构设计，兼顾可靠性、性能和可扩展性。"
+  "showcase": {
+    "ingest": {
+      "number": "1.0",
+      "label": "导入",
+      "title": "将任何文档\n转化为知识",
+      "description": "导入 PDF、Word、Excel、网页和数据库。KnowFlow 通过版面识别解析文档，提取表格，构建结构化分块，为检索做好准备。"
+    },
+    "retrieve": {
+      "number": "2.0",
+      "label": "检索",
+      "title": "找到正确答案\n而非关键词",
+      "description": "混合搜索结合稠密向量检索、关键词匹配和重排序。从知识库获取精确的上下文答案——而非文档链接。"
+    },
+    "orchestrate": {
+      "number": "3.0",
+      "label": "编排",
+      "title": "一个接口\n所有模型",
+      "description": "连接任何 LLM——云端或本地。KnowFlow 根据成本、延迟和能力将查询路由到合适的模型，跨供应商自动故障转移。"
+    },
+    "deploy": {
+      "number": "4.0",
+      "label": "部署",
+      "title": "自信地交付\n到生产环境",
+      "description": "支持本地部署、私有云或混合部署。Docker 和 Kubernetes 原生支持。离线环境支持。企业 SLA 保证 99.9% 可用性。"
+    }
   },
   "pricing": {
     "title": "简单透明的定价",
@@ -106,6 +109,37 @@
       "cta": "联系销售"
     }
   },
+  "social": {
+    "poweredBy": "基于 RAGFlow 构建 — 最受欢迎的开源 RAG 引擎",
+    "stats": {
+      "stars": "GitHub Stars",
+      "forks": "Forks",
+      "dockerPulls": "Docker Pulls",
+      "contributors": "Contributors"
+    },
+    "testimonials": [
+      {
+        "quote": "KnowFlow 彻底改变了我们团队获取内部知识的方式，检索精度无可匹敌。",
+        "name": "Sarah Chen",
+        "company": "Meridian Health"
+      },
+      {
+        "quote": "我们评估了市面上所有 RAG 平台，KnowFlow 的文档解析能力遥遥领先。",
+        "name": "Marcus Weber",
+        "company": "Tectonic Labs"
+      },
+      {
+        "quote": "部署非常顺畅。离线部署支持是我们合规团队的决定性因素。",
+        "name": "Yuki Tanaka",
+        "company": "NovaBridge"
+      }
+    ]
+  },
+  "cta": {
+    "title": "面向企业\n即刻可用",
+    "primary": "开始使用",
+    "secondary": "联系销售"
+  },
   "contact": {
     "title": "预约演示",
     "subtitle": "亲身体验 KnowFlow AI。我们的团队将为您提供个性化演示。",
@@ -129,7 +163,15 @@
     "careers": "加入我们",
     "privacy": "隐私政策",
     "terms": "服务条款",
-    "copyright": "保留所有权利。"
+    "copyright": "保留所有权利。",
+    "ingest": "导入",
+    "retrieve": "检索",
+    "orchestrate": "编排",
+    "deploy": "部署",
+    "security": "安全",
+    "status": "状态",
+    "github": "GitHub",
+    "community": "社区"
   },
   "portal": {
     "dashboard": "控制台",
