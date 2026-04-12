@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
@@ -9,6 +10,26 @@ import {
   type NewLicense,
 } from "@/lib/db/schema";
 import { generateLicenseKey, signLicense } from "@/lib/license/rsa";
+
+// ---------------------------------------------------------------------------
+// Webhook payload schema
+// ---------------------------------------------------------------------------
+const webhookPayloadSchema = z.object({
+  meta: z.object({
+    event_name: z.string(),
+    custom_data: z.record(z.string(), z.string()).optional(),
+  }),
+  data: z.object({
+    id: z.union([z.string(), z.number()]),
+    attributes: z.object({
+      user_email: z.string().email(),
+      user_name: z.string().optional(),
+      first_order_item: z.object({
+        variant_id: z.union([z.string(), z.number()]).optional(),
+      }).optional(),
+    }),
+  }),
+})
 
 // ---------------------------------------------------------------------------
 // Tier mapping: Lemon Squeezy variant ID -> license tier
@@ -86,42 +107,33 @@ export async function POST(request: Request) {
       );
     }
 
-    const payload: unknown = JSON.parse(rawBody);
-    const event = (payload as Record<string, unknown>).meta as
-      | Record<string, unknown>
-      | undefined;
-    const eventName = event?.event_name as string | undefined;
+    const parseResult = webhookPayloadSchema.safeParse(JSON.parse(rawBody));
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: "Invalid webhook payload" },
+        { status: 400 },
+      );
+    }
+
+    const { meta, data } = parseResult.data;
+    const eventName = meta.event_name;
 
     if (eventName !== "order_created") {
       // Acknowledge events we don't handle
       return NextResponse.json({ received: true });
     }
 
-    // Extract order data from Lemon Squeezy webhook payload
-    const data = (payload as Record<string, unknown>).data as Record<
-      string,
-      unknown
-    >;
-    const attributes = data?.attributes as Record<string, unknown>;
-
-    const customerEmail = attributes?.user_email as string;
-    const customerName = attributes?.user_name as string | undefined;
-    const orderId = String(data?.id ?? "");
-    const firstOrderItem = (attributes?.first_order_item as Record<string, unknown>) ?? {};
-    const variantId = String(firstOrderItem?.variant_id ?? "");
-
-    if (!customerEmail || !orderId) {
-      return NextResponse.json(
-        { error: "Missing required order data" },
-        { status: 400 },
-      );
-    }
+    const { attributes } = data;
+    const customerEmail = attributes.user_email;
+    const customerName = attributes.user_name;
+    const orderId = String(data.id);
+    const variantId = String(attributes.first_order_item?.variant_id ?? "");
 
     const tier = tierFromVariantId(variantId);
 
     // Find or create customer -- use Clerk ID if available in custom data,
     // otherwise fall back to email-based lookup
-    const customData = (event?.custom_data as Record<string, string>) ?? {};
+    const customData: Record<string, string> = meta.custom_data ?? {};
     const clerkId = customData.clerk_id ?? `ls_${customerEmail}`;
 
     let customer = await db.query.customers.findFirst({
@@ -169,6 +181,6 @@ export async function POST(request: Request) {
     // Always return 200 for webhook endpoints to prevent retries on app errors
     // Return 500 only for truly unexpected failures
     console.error("Lemon Squeezy webhook error:", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 });
   }
 }

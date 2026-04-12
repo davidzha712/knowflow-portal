@@ -28,15 +28,14 @@ export async function PATCH(
   const body: unknown = await request.json()
   const parsed = updateSchema.parse(body)
 
-  const updates: Record<string, unknown> = {}
-  if (parsed.tier) updates.tier = parsed.tier
-  if (parsed.status) updates.status = parsed.status
-  if (parsed.maxActivations) updates.maxActivations = parsed.maxActivations
-  if (parsed.expiresAt) updates.expiresAt = new Date(parsed.expiresAt)
-
   const [updated] = await db
     .update(licenses)
-    .set(updates)
+    .set({
+      ...(parsed.tier !== undefined && { tier: parsed.tier }),
+      ...(parsed.status !== undefined && { status: parsed.status }),
+      ...(parsed.maxActivations !== undefined && { maxActivations: parsed.maxActivations }),
+      ...(parsed.expiresAt !== undefined && { expiresAt: new Date(parsed.expiresAt) }),
+    })
     .where(eq(licenses.id, id))
     .returning()
 

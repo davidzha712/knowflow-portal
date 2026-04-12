@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { z } from "zod"
 import { requireAdmin } from "@/lib/auth/admin"
 import { generateUnbanToken } from "@/lib/license/knowflow-format"
 
@@ -16,9 +17,7 @@ export async function POST(request: Request) {
 
   try {
     const body: unknown = await request.json()
-    const reason = typeof body === "object" && body !== null
-      ? (body as Record<string, unknown>).reason as string ?? ""
-      : ""
+    const { reason } = z.object({ reason: z.string().optional().default("") }).parse(body)
 
     const token = generateUnbanToken()
 

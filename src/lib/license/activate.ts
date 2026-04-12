@@ -18,7 +18,12 @@ export async function activateLicense(
   licenseId: string,
   requestCode: string,
 ) {
-  const { machineFingerprint } = parseActivationRequest(requestCode);
+  let machineFingerprint: string;
+  try {
+    ({ machineFingerprint } = parseActivationRequest(requestCode));
+  } catch {
+    throw new Error("Invalid activation request code");
+  }
 
   // 1. Fetch and validate the license
   const license = await db.query.licenses.findFirst({
